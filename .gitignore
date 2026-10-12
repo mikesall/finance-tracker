@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.wrangler/
+.sites-runtime/
+.vinext/
+.next/
+.env*
+*.tsbuildinfo
+next-env.d.ts
+private-data/
+profile/local.*
+local-deployment/
+verification/
+.core-backups/
+CORE_UPSTREAM.json

@@ -1,0 +1,1 @@
+globalThis.FinanceProfile={title:'Personal ledger',timezone:'UTC',categorySlugs:{other:'other'},spendingColorOrder:[],assetColorOrder:[],familyClasses:{},familyDefinitions:[{id:'unclassified',label:'Unclassified'}]};

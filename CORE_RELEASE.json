@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "version": "0.1.0",
+  "files": [
+    {
+      "path": "finance-core/schemas/finance-allocation-mapping-schema.ts",
+      "bytes": 786,
+      "sha256": "e478884cd848c17f43ecf88ebdf1b24820b605f31e5e3719a122241fdf057a04"
+    },
+    {
+      "path": "finance-core/schemas/finance-budget-policy-schema.ts",
+      "bytes": 678,
+      "sha256": "87ade09f88f0c70c2a40b49540fa42e21f9804e15c338bade4273683553d0e29"
+    },
+    {
+      "path": "finance-core/schemas/finance-lookback-schema.ts",
+      "bytes": 3174,
+      "sha256": "d52b20034e52280d65fe28b7f44ad0656d47e54cccf597651aba8182d3545b53"
+    },
+    {
+      "path": "finance-core/schemas/finance-native-schema.ts",
+      "bytes": 12180,
+      "sha256": "ca7c7908264861cc9402a214c297f3acc2dd49d0db1ddb10d559aab294f7a360"
+    },
+    {
+      "path": "finance-core/schemas/finance-policy-precedence.ts",
+      "bytes": 1549,
+      "sha256": "e17641177e9b84a302193a9e04137f9326bbfdb7b85a3fe6d31f1006f8091155"
+    },
+    {
+      "path": "finance-core/schemas/finance-policy-rule-schema.ts",
+      "bytes": 2157,
+      "sha256": "80ab7e20fa1a99afb792c9531a9ec5e4fe20067c23dc63adb36461ee0367b4a7"
+    },
+    {
+      "path": "finance-core/schemas/finance-reporting-window-schema.ts",
+      "bytes": 2174,
+      "sha256": "1b068563fe250cf5e3bd5a8e682e85d992816987380603146953a0560b948f7e"
+    },
+    {
+      "path": "finance-core/schemas/finance-snapshot-schema.ts",
+      "bytes": 4928,
+      "sha256": "f3334c4c730605f6fce6f523145aee0d40faf402199d9b7ed805ecd51c33514e"
+    },
+    {
+      "path": "finance-core/schemas/workspace-schema.ts",
+      "bytes": 4706,
+      "sha256": "5d110bcc7f40794d0bf5288a5548cb1a391ec8007189e1f1a69f33f00f10b626"
+    },
+    {
+      "path": "finance-core/ui/ledger-shell.html",
+      "bytes": 94534,
+      "sha256": "4b28fb90b898c13f39f9b48809734850fc2fa392c4334b24f9bc964440017ac2"
+    },
+    {
+      "path": "public/finance-core/effective-ledger.js",
+      "bytes": 19921,
+      "sha256": "aab7b11392b2f5ed94f7353e8c47d32a9b84e1e7ad052e90f758439a3da1774d"
+    },
+    {
+      "path": "public/finance-core/portfolio-model.js",
+      "bytes": 16353,
+      "sha256": "41cce97ef99f3a091f670f21d25a87518af43c960e819f90a0f2669d681e7cef"
+    },
+    {
+      "path": "public/finance-core/read-only-dashboard.js",
+      "bytes": 73630,
+      "sha256": "031ba70e0275aa8f7475cd972709f4e3999b0572e8b8f8a69ac05bf0cecc29cc"
+    },
+    {
+      "path": "public/finance-core/read-only-model.js",
+      "bytes": 32470,
+      "sha256": "e291619da7d2c7d15a5dec36bae38f498cd1a9ba6a46d413ba0db62996bed211"
+    }
+  ]
+}

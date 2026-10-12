@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "workspaceId": "empty-ledger",
+  "meta": {
+    "title": "Personal ledger",
+    "currency": "USD",
+    "asOf": "2000-01-01",
+    "queriedAt": "",
+    "coverageStart": "2000-01-01",
+    "coverageEnd": "2000-01-01",
+    "baselineStart": "2000-01-01",
+    "baselineEnd": "2000-01-01",
+    "sourceFreshness": "No import yet; placeholder dates are not financial coverage.",
+    "coverageComplete": false,
+    "sourceFile": "",
+    "sourceSha256": "",
+    "sourceCount": 0,
+    "accounts": [],
+    "limitations": [
+      "No financial snapshot has been imported."
+    ]
+  },
+  "categories": [
+    {
+      "id": "other",
+      "name": "Other",
+      "annualCents": 0,
+      "note": "No approved budget.",
+      "budgeted": false
+    }
+  ],
+  "transactions": [],
+  "overrides": {},
+  "rules": [],
+  "audit": [],
+  "budgetHistory": [],
+  "importHistory": [],
+  "housingPlan": []
+}
