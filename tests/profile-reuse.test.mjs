@@ -53,7 +53,7 @@ test('explicit mixed and unclassified family targets survive without an owner po
  const profile={familyClasses:{mixed_multi_asset:['balanced_example']},familyDefinitions:[{id:'mixed_multi_asset',label:'Example mixed'},{id:'unclassified',label:'Example unclassified'}]};
  const P=models(profile).PortfolioModel,result=P.allocationFamilies(rows,10000);
  assert.equal(result[0].targetPercent,25);assert.equal(result[1].targetPercent,75);assert.equal(result.reduce((s,f)=>s+f.targetPercent,0),100);
- const derived=models().PortfolioModel.allocationFamilies(rows,10000);assert.deepEqual(Array.from(derived,f=>f.id),['balanced_example','unknown_example']);assert.equal(derived.reduce((n,f)=>n+f.targetPercent,0),100);
+ const derived=models().PortfolioModel.allocationFamilies(rows,10000);assert.deepEqual(Array.from(derived,f=>f.id),['mixed_multi_asset','unclassified']);assert.equal(derived.reduce((n,f)=>n+f.targetPercent,0),100);
  const optedOut=models({...profile,familyTargetPolicy:{unassignedFamilyIds:['mixed_multi_asset']}}).PortfolioModel.allocationFamilies(rows,10000);
  assert.equal(optedOut[0].targetPercent,null);assert.equal(optedOut[1].targetPercent,75);
  rows[0].targetPercent=null;assert.equal(P.allocationFamilies(rows,10000)[0].targetPercent,null);

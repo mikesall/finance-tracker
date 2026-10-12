@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.4.1",
+  "version": "0.5.0",
   "files": [
     {
       "path": "finance-core/schemas/finance-allocation-mapping-schema.ts",
@@ -44,8 +44,8 @@
     },
     {
       "path": "finance-core/schemas/finance-reporting-policy-schema.ts",
-      "bytes": 6316,
-      "sha256": "cd131a853fbf5ff1a451f21b979390a3b2f415b4e8cc9f84f7fe7f43c5bb8a36"
+      "bytes": 7698,
+      "sha256": "d8fa895c8889b478bf5983fb35132939d35f0ed648ab0636f96801cd019ae915"
     },
     {
       "path": "finance-core/schemas/finance-reporting-window-schema.ts",
@@ -54,8 +54,8 @@
     },
     {
       "path": "finance-core/schemas/finance-setup-verification.ts",
-      "bytes": 3869,
-      "sha256": "20b3225ad0c8befd8d8d8603368341739072065a7ed57785b7cd7595a8facaa0"
+      "bytes": 4622,
+      "sha256": "d3dc25be07473721199db550ccfe78eae438503ad14cf057a5b4ce037a3b7be2"
     },
     {
       "path": "finance-core/schemas/finance-snapshot-schema.ts",
@@ -69,8 +69,8 @@
     },
     {
       "path": "finance-core/ui/ledger-shell.html",
-      "bytes": 97594,
-      "sha256": "97d500c04d366b5c18244b0fb82bfb4409f42c12c2f2e35d48fc1000e9f7316e"
+      "bytes": 97700,
+      "sha256": "c0518b9ffee997d33ea346c2054f1f215fcc1314345d6d5fdbd5464eb3f45ad8"
     },
     {
       "path": "public/dashboard-requests.js",
@@ -84,18 +84,18 @@
     },
     {
       "path": "public/finance-core/portfolio-model.js",
-      "bytes": 19552,
-      "sha256": "019011557d93854be87940fa4784af0ba60f926b807356271a08e12e077fafe9"
+      "bytes": 26894,
+      "sha256": "051309a5990256cb74585c8a307f539e95c765f330a1eea25a2cc0f496bb04f9"
     },
     {
       "path": "public/finance-core/read-only-dashboard.js",
-      "bytes": 76294,
-      "sha256": "78c55a1b85f0601d94b73f71010d7229566e5687b3c4b1c96c26ce2aade788aa"
+      "bytes": 76628,
+      "sha256": "4812f0933410d803f1e7e55385e0b3453cf08f35c29ac893b70cc4dc2d9649fd"
     },
     {
       "path": "public/finance-core/read-only-model.js",
-      "bytes": 37296,
-      "sha256": "c005263be0fca378fd6b3d6baa373a0513551179ce6a9c6590077bef53b4f433"
+      "bytes": 37508,
+      "sha256": "843461a687db64157fab58b58bc65284d0ae0851b9173db7883344299b184679"
     },
     {
       "path": "public/pulse.svg",
