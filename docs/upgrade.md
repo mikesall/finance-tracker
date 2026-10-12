@@ -35,3 +35,7 @@ After reviewing a specific published Git commit and its full file manifest:
 Updates repeat this explicit procedure with a newly reviewed commit. Never fetch or execute latest code inside a request handler or a scheduled refresh. A private instance may keep application-specific adapters and preferences while sharing exactly the same versioned canonical core.
 
 The shell dependency test requires every loaded script, stylesheet, icon and other resource to appear in the shared manifest or the explicit private adapter allowlist. `/finance-profile.js` is the sole intentional private shell adapter. Data APIs remain outside the shared asset boundary.
+
+## Core 0.2.0 wire change
+
+This release uses native schema 1.1, optional generic recurring costs, explicit manual balance inclusion and configured unclassified categories. It removes required household and provider-specific fields. Review [data-contract.md](data-contract.md) before adoption. Existing instances must keep their stored wire contract through private validation and presentation adapters, or perform a separately authorized migration with full roundtrip and model parity checks. The updater changes code only; it cannot infer private asset selections or rewrite a weekly writer contract.

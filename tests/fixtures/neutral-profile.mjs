@@ -1,0 +1,17 @@
+// Independent, fictional second-person fixture. Optional features are absent.
+export function neutralFixture(){
+ const coverage={version:'v1',dataset:'transactions',availability:'ready',state:'full_history',freshness:'unknown',is_complete_for_query:true,selected_pipeline:null,warning_codes:[]};
+ const accountId='acct_'+'1'.repeat(24),id='txn_'+'2'.repeat(24),at='2026-10-05T12:00:00Z';
+ const snapshot={
+  metadata:{schemaVersion:'1.1',retrievedAt:at,source:'ChatGPT Finances',sourceAsOf:null,sourceFreshness:'unknown',period:{start:'2025-10-01',end:'2026-10-04',basis:'Fictional test scope'},transactionCoverage:coverage,transactionCount:1,holdingsCount:0,transactionPagesComplete:true,holdingsPagesComplete:true,currency:'USD',amountConvention:'Positive debits, negative credits',audience:'owner',warnings:[]},
+  accounts:[{id:accountId,institution:'Fictional bank',label:'Checking',type:'depository',subtype:'checking',currency:'USD',balance:100,available:null,netBalance:100,balanceDate:null,sourceReportedUpdatedAt:null,balanceAge:'unknown',connectionStatus:'connected',coverage,transactionRowsReturned:1}],
+  transactions:[{id,accountId,account:'Checking',date:'2026-10-01',merchant:'Example workshop',amount:10,cashFlowAmount:-10,currency:'USD',pending:false,sourceCategory:'unknown',sourceDetailedCategory:null,sourceConfidence:'unknown',reportingCategory:'Uncategorized',classificationBasis:'Purpose unavailable',classificationState:'unclassified',kind:'expense_payment',ongoingTreatment:'unassessed',flags:[],hasTransferLink:false}],
+  spending:{metricLabel:'Classified payments',monthly:[{month:'2026-10',classifiedExpensePayments:10,excludedIncome:0,loanPaymentsIncluded:0,excludedTransfers:0,economicSpending:null,ongoingBaseline:null}],monthlyByCategory:[],storedCategoryNetAmounts:{},economicSpending:null,ongoingBaseline:null,oneOffReference:[]},
+  portfolio:{holdings:[],linkedInvestmentAccountsValue:0,linkedDepositorySnapshotValue:100,linkedInvestableSnapshotValue:100,targetReferenceDate:'unavailable',targetDenominator:'Linked investments and cash',targets:[],allocationLookThrough:'unavailable'},savedRules:[]
+ };
+ const workspace={schemaVersion:1,workspaceId:'fictional-person',meta:{title:'Fictional ledger',currency:'USD',asOf:'2026-10-04',queriedAt:at,coverageStart:'2025-10-01',coverageEnd:'2026-10-04',baselineStart:'2025-10-01',baselineEnd:'2026-10-04',sourceFreshness:'unknown',coverageComplete:false,sourceFile:'Fictional',sourceSha256:'',sourceCount:0,accounts:[],limitations:[]},categories:[['uncategorized','Uncategorized'],['services','Services'],['business','Business']].map(([id,name])=>({id,name,annualCents:0,note:'Fictional category',budgeted:false})),transactions:[],overrides:{},rules:[],audit:[],budgetHistory:[],importHistory:[]};
+ const policy={policyId:'fictional-policy',issuedAt:at,authority:'Fictional test owner',categoryNames:{},categoryAliases:{},rules:[],notes:[]};
+ return {snapshot,workspace,policy};
+}
+export const manualBalance=(id,value,extra={})=>({id,label:id,value,currency:'USD',kind:value<0?'liability':'asset',status:'confirmed',basis:'Fictional owner evidence',...extra});
+export function manualPolicy(ids){return {taxonomy:[{id:'cash',label:'Available cash',targetPercent:null}],classifications:[],cashAssetClassId:'cash',netWorth:{manualBalanceIds:ids,basis:'Explicit fictional selections'},authority:'Fictional owner',verifiedAt:'2026-10-05T12:00:00Z',notes:[]};}

@@ -51,7 +51,7 @@ test('incomplete coverage, unavailable budgets and absent category actuals remai
 test('presentation dates remain exact across DST, year boundaries and leap days',()=>{
  for(const end of ['2024-03-10','2024-11-03','2026-01-04'])for(const period of ['3M','6M','12M']){const v=M.categoryBudgetPeriod(fixture(end),period);assert.equal((Date.parse(v.end)-Date.parse(v.start))/86400000+1,v.days);assert.equal(new Date(v.start+'T12:00:00Z').getUTCDay(),1);}
 });
-const base=()=>({report:{taxonomy:[{id:'cash'},{id:'us_stock'}],cashAssetClassId:'cash'},depository:100,denominator:1001,allocationRoundingAdjustmentCents:1,allocation:[{id:'us_stock',label:'Stock',valueCents:900,actualPercent:900/1001*100,targetPercent:80},{id:'cash',label:'Cash',valueCents:100,actualPercent:100/1001*100,targetPercent:20},{id:'unclassified',label:'Unknown',valueCents:1,actualPercent:1/1001*100,targetPercent:null}],groups:[{assetClassId:'us_stock'}],netRows:[],metrics:{netWorth:1001}});
+const base=()=>({report:{taxonomy:[{id:'cash'},{id:'domestic_stock'}],cashAssetClassId:'cash'},depository:100,denominator:1001,allocationRoundingAdjustmentCents:1,allocation:[{id:'domestic_stock',label:'Stock',valueCents:900,actualPercent:900/1001*100,targetPercent:80},{id:'cash',label:'Cash',valueCents:100,actualPercent:100/1001*100,targetPercent:20},{id:'unclassified',label:'Unknown',valueCents:1,actualPercent:1/1001*100,targetPercent:null}],groups:[{assetClassId:'domestic_stock'}],netRows:[],metrics:{netWorth:1001}});
 test('one-cent bookkeeping artifacts disappear only from presentation; a real one-cent unknown survives',()=>{
  const pf=base(),before=JSON.stringify(pf),view=P.display(pf);assert.equal(view.allocation.length,2);assert.equal(view.families.some(f=>f.id==='unclassified'),false);assert.equal(M.compositionTotals(view).valueCents,1000);assert.equal(view.denominator,1001);assert.equal(view.metrics.netWorth,1001);assert.equal(JSON.stringify(pf),before);
  pf.groups.push({assetClassId:'unclassified'});assert.ok(P.display(pf).allocation.some(c=>c.id==='unclassified'));
@@ -67,8 +67,8 @@ test('Cash and Liabilities are display-only parents, preserve signed children, a
   {key:'credit',kind:'balance',security:'Liability',name:'Credit',valueCents:-50},
   {key:'loan',kind:'balance',security:'Liability',name:'Loan',valueCents:-100},
   {key:'credit-balance',kind:'balance',security:'Liability',name:'Credit balance',valueCents:10},
-  {key:'manual:mortgage',kind:'manual',name:'Mortgage',valueCents:-200},
-  {key:'manual:home',kind:'manual',name:'Home',valueCents:500},
+  {key:'manual:tuition',kind:'manual',security:'Liability',name:'Tuition balance',valueCents:-200},
+  {key:'manual:equipment',kind:'manual',security:'Asset',name:'Equipment',valueCents:500},
   {key:'rounding',kind:'reconciliation',valueCents:1}
  ];
  const before=JSON.stringify(pf),view=P.display(pf),cash=view.netRows.find(r=>r.key==='display:cash'),liabilities=view.netRows.find(r=>r.key==='display:liabilities');

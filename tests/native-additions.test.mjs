@@ -9,7 +9,7 @@ test('a second profile snapshot accepts named reporting and browsing zones with 
  for(const timezone of ['Asia/Tokyo','America/New_York','UTC']) {
   const f=nativeAdditionFixture();f.metadata.reportingWindow={kind:'rolling_52_weeks',timezone,cutoff:'2026-10-04'};
   f.metadata.browsingWindow={kind:'18_completed_calendar_months_plus_partial_current',timezone,start:'2025-04-01',end:'2026-10-04',completeCalendarMonths:18,partialMonth:'2026-10',partialThrough:'2026-10-04',independentOfMetricsWindow:true,retainFirstMonthStart:true};
-  f.spending.confirmedPlanningAssumptions.extensions={'example.profile':{clubMonthly:25,includesCleaning:false}};
+  f.spending.confirmedPlanningAssumptions.extensions={'example.profile':{clubMonthly:25,trial:false}};
   assert.deepEqual(nativeSnapshotSchema.parse(f),f);
   for(const key of ['reportingWindow','browsingWindow'])for(const bad of ['invalid/place','', '+09:00']){const invalid=structuredClone(f);invalid.metadata[key].timezone=bad;assert.equal(nativeSnapshotSchema.safeParse(invalid).success,false);}
  }

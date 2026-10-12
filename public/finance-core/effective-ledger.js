@@ -5,18 +5,20 @@ globalThis.EffectiveLedger = (() => {
   // Storage/schema validation may reorder object fields without an item edit.
   const canonical=x=>Array.isArray(x)?x.map(canonical):x&&typeof x==='object'?Object.fromEntries(Object.keys(x).sort().map(k=>[k,canonical(x[k])])):x;
   const same=(a,b)=>JSON.stringify(canonical(a))===JSON.stringify(canonical(b));
-  const expenseKinds=new Set(['expense_payment','mortgage_payment','car_loan_payment']);
-  const categoryIds={'AI':'ai','Bills & utilities':'utilities','Entertainment':'entertainment','Financial':'fees','Food':'food','Gifts & donations':'gifts','Health & personal care':'health','Housing':'housing','Income':'income','Income taxes':'tax','Other / needs review':'other','Services':'services','Shopping':'shopping','Transfers':'transfers','Transportation':'transport','Travel':'travel'};
+  const expenseKinds=new Set(globalThis.FinanceProfile?.sourceExpenseKinds||['expense_payment','debt_payment']);
+  const categoryIdsDefault={'Bills & utilities':'utilities','Entertainment':'entertainment','Financial':'fees','Food':'food','Gifts & donations':'gifts','Health & personal care':'health','Housing':'housing','Income':'income','Income taxes':'tax','Other / needs review':'other','Services':'services','Shopping':'shopping','Transfers':'transfers','Transportation':'transport','Travel':'travel'};
   function sourceTreatment(t){
+    const custom=globalThis.FinanceProfile?.sourceTreatment?.(t);if(custom!==undefined)return custom;
     if(t.kind==='excluded_income')return 'income';
     if(t.kind==='excluded_transfer_or_card_repayment')return 'transfer';
     if(t.kind.startsWith('unresolved'))return 'unresolved';
     if(t.ongoingTreatment==='excluded_confirmed_historical_one_off')return 'one_time';
-    if(t.ongoingTreatment==='excluded_paid_off_car')return 'discontinued';
+    if(t.ongoingTreatment==='excluded_discontinued')return 'discontinued';
     if(t.reportingCategory==='Income taxes')return 'tax';
     return t.ongoingTreatment==='unresolved'?'unresolved':'unassessed';
   }
   function categoryId(t,w,categories,policy){
+    const categoryIds={...categoryIdsDefault,...(globalThis.FinanceProfile?.sourceCategoryIds||{})};
     const label=String(t.reportingCategory||'').trim().toLowerCase(),known=Object.keys(categoryIds).find(name=>name.toLowerCase()===label);
     const canonical=categoryIds[known]||'source_'+Array.from(new TextEncoder().encode(t.reportingCategory)).map(c=>c.toString(16).padStart(2,'0')).join('').slice(0,160);
     const mapped=w.sourceCategoryMappings?.[canonical]||policy?.categoryAliases?.[canonical]||canonical;
@@ -31,7 +33,7 @@ globalThis.EffectiveLedger = (() => {
   }
   function sourceBase(t,w,categories,id=t.id,policy=null){return {
     id,date:t.date,amountCents:Math.round(t.amount*100),merchant:t.merchant,description:t.merchant,account:t.account,
-    category:categoryId(t,w,categories,policy),subcategory:t.reportingSubcategory||(t.sourceDetailedCategory||'').replaceAll('_',' '),treatment:sourceTreatment(t),label:t.merchant,note:'',review:[...t.flags],evidence:t.classificationBasis,
+    ...(t.classificationState?{classificationState:t.classificationState}:{}),category:categoryId(t,w,categories,policy),subcategory:t.reportingSubcategory||(t.sourceDetailedCategory||'').replaceAll('_',' '),treatment:sourceTreatment(t),label:t.merchant,note:'',review:[...t.flags],evidence:t.classificationBasis,
     sourceCategory:t.sourceCategory,sourceDetail:t.sourceDetailedCategory||'',sourceConfidence:t.sourceConfidence,linkedTransfer:t.hasTransferLink,source:'ChatGPT Finances snapshot',splits:[],
   };}
   function partsFor(t){
@@ -73,14 +75,17 @@ globalThis.EffectiveLedger = (() => {
       const rule=[...w.rules].reverse().find(r=>r.merchant===base.merchant);
       const policyPatch={},policyNotes=[],appliedRules=[];let categoryPolicyAt=policy?.issuedAt;
       const details=[saved?.label,saved?.subcategory,saved?.evidence,base.description,base.sourceDetail].join(' ');
-      const identified=!!(saved?.splits?.length||o.category||o.splits?.length||saved&&((!['shopping','other'].includes(saved.category))||['one_time','discontinued'].includes(saved.treatment)));
+      const unresolvedIds=policy?.unclassifiedCategoryIds||w.unclassifiedCategoryIds||profile.unclassifiedCategoryIds||[];
+      const unclassified=t=>t?.classificationState==='unclassified'||(t?.classificationState!=='classified'&&unresolvedIds.includes(t?.category));
+      const sourceUnclassified=source?.classificationState==='unclassified'||(source?.classificationState!=='classified'&&unclassified(base));
+      const identified=!!(saved?.splits?.length||o.category||o.splits?.length||saved&&((!unclassified(saved))||['one_time','discontinued'].includes(saved.treatment)));
       for(const r of policyRules){
         if(r.sourceKeys&&!r.sourceKeys.includes(id)&&!r.sourceKeys.includes(source?.id))continue;
         if(r.onDate&&base.date!==r.onDate)continue;
         if(r.fromDate&&base.date<r.fromDate)continue;
         if(r.amountCents!==undefined&&base.amountCents!==r.amountCents)continue;
         if(!matches(r.merchantPattern,base.merchant)||!matches(r.accountPattern,base.account)||!matches(r.detailPattern,details)||(r.direction==='outflow'&&base.amountCents<=0)||(r.direction==='inflow'&&base.amountCents>=0))continue;
-        if(r.scope==='unidentified_only'&&(identified||source&&!['shopping','other'].includes(base.category))){
+        if(r.scope==='unidentified_only'&&(identified||source&&!sourceUnclassified)){
           if(saved){preserved.category=saved.category;preserved.subcategory=saved.subcategory;}continue;
         }
         if(profile.allowClassificationRule?.({rule:r,base,saved,policy,context:profileContext})===false)continue;
@@ -134,7 +139,7 @@ globalThis.EffectiveLedger = (() => {
       if(source&&saved?.splits?.length&&initial&&same(saved.splits,initial.splits)&&!o.splits&&!policyPatch.splits)warnings.push('Historical split retained for review; its exact mixed-order receipt mapping is not established.');
       if(source&&['one_time','discontinued','outside'].includes(preserved.treatment)&&preserved.treatment!==base.treatment)warnings.push('Saved historical treatment differs from source classification; review the item-level evidence.');
       t.splitConflict=!!t.splits?.length&&(t.splits.reduce((a,p)=>a+p.amountCents,0)!==t.amountCents||t.splits.some(p=>!categories.some(c=>c.id===p.category)||(p.amountCents&&Math.sign(p.amountCents)!==Math.sign(t.amountCents))));
-      if(t.splitConflict){warnings.push('Saved split no longer matches the current source amount/category. Allocations are retained unchanged; the current payment is shown unallocated until repaired.');const fallback=categories.find(c=>c.id==='other')||categories[0];t.conflictCategory=fallback.id;}
+      if(t.splitConflict){warnings.push('Saved split no longer matches the current source amount/category. Allocations are retained unchanged; the current payment is shown unallocated until repaired.');const fallback=categories.find(c=>unresolvedIds.includes(c.id))||categories[0];t.conflictCategory=fallback.id;}
       if(source&&['unassessed','unresolved'].includes(t.treatment))warnings.push('Ongoing/economic treatment is unassessed; a payment is not a validated ongoing expense.');
       if(t.sourceState==='not_in_current_snapshot')warnings.push('Saved history: absent from the latest source window/result. Retained for reference, excluded from current-source totals.');
       const resolvedMembership=policyPatch.treatment==='transfer'||policyPatch.treatment==='income';
@@ -151,14 +156,15 @@ globalThis.EffectiveLedger = (() => {
     const warningResolutions=policyRules.filter(r=>r.resolvedSourceWarning&&rows.some(t=>t.appliedPolicyRules.includes(r.id))&&rows.filter(t=>t.appliedPolicyRules.includes(r.id)).every(t=>t.treatment===r.treatment));
     const sourceWarnings=(n?.metadata.warnings||[]).map(note=>clarifyText(warningResolutions.find(r=>matches(r.resolvedSourceWarning.pattern,note))?.resolvedSourceWarning.replacement||note));
     const meta=n?{...w.meta,asOf:n.metadata.retrievedAt.slice(0,10),queriedAt:n.metadata.retrievedAt,coverageStart:n.metadata.period.start,coverageEnd:n.metadata.period.end,baselineStart:n.metadata.period.start,baselineEnd:n.metadata.period.end,sourceFreshness:n.metadata.sourceFreshness,coverageComplete:false,sourceFile:'Connected ChatGPT Finances snapshot',sourceCount:n.transactions.length,accounts:n.accounts.map(a=>a.label),limitations:[...sourceWarnings,'All-account completeness and economic/ongoing spending remain unresolved. Saved history outside the current source result is retained separately.']}:{...w.meta};
-    return {rows,parts,categories:effectiveCategories,housingPlan:(w.housingPlan||[]).map(h=>({...h,kind:clarifyText(h.kind)})),meta,sourceCount:n?.transactions.length??0,conflictCount:rows.filter(t=>t.splitConflict).length,economicSpendingCents:n?null:undefined,ongoingBaselineCents:n?null:undefined,policy,...(profile.classificationDiagnostics?.(rows,profileContext)||{transitionDate:null,postTransitionVenmoRows:0}),sourceWarnings,pendingRefundCount:rows.filter(t=>t.sourceState==='current'&&t.reportingStatus==='refund_pending'&&t.amountCents>0).length,pendingRefundCents:rows.filter(t=>t.sourceState==='current'&&t.reportingStatus==='refund_pending'&&t.amountCents>0).reduce((a,t)=>a+t.amountCents,0),ongoingExcluded:rows.filter(t=>['one_time','discontinued','transfer','income','outside'].includes(t.treatment)),plans:copy(policy?.plans||[])};
+    const result={rows,parts,categories:effectiveCategories,...((policy?.recurringCosts||w.recurringCosts)?{recurringCosts:[...new Map([...(policy?.recurringCosts||[]),...(w.recurringCosts||[])].map(r=>[r.id,copy(r)])).values()]}:{}),meta,sourceCount:n?.transactions.length??0,conflictCount:rows.filter(t=>t.splitConflict).length,economicSpendingCents:n?null:undefined,ongoingBaselineCents:n?null:undefined,policy,...(profile.classificationDiagnostics?.(rows,profileContext)||{}),sourceWarnings,pendingRefundCount:rows.filter(t=>t.sourceState==='current'&&t.reportingStatus==='refund_pending'&&t.amountCents>0).length,pendingRefundCents:rows.filter(t=>t.sourceState==='current'&&t.reportingStatus==='refund_pending'&&t.amountCents>0).reduce((a,t)=>a+t.amountCents,0),ongoingExcluded:rows.filter(t=>['one_time','discontinued','transfer','income','outside'].includes(t.treatment))};
+    return profile.finalizeLedger?.({result,w,policy,clarifyText})||result;
   }
   function aggregate(parts){
     const byCategory={},byMonth={};let totalCents=0;
     for(const p of parts){totalCents+=p.amountCents;byCategory[p.category]=(byCategory[p.category]||0)+p.amountCents;const m=p.date.slice(0,7);byMonth[m]=(byMonth[m]||0)+p.amountCents;}
     return {totalCents,byCategory,byMonth};
   }
-  function persistableBase(t){const out={};for(const k of ['id','date','amountCents','merchant','description','account','category','subcategory','treatment','label','note','review','evidence','sourceCategory','sourceDetail','sourceConfidence','linkedTransfer','source','splits'])out[k]=copy(t[k]);out.splits=[];return out;}
+  function persistableBase(t){const out={};for(const k of ['id','date','amountCents','merchant','description','account','category','subcategory','treatment','label','note','review','evidence','sourceCategory','sourceDetail','sourceConfidence','linkedTransfer','source','splits'])out[k]=copy(t[k]);if(t.classificationState)out.classificationState=t.classificationState;out.splits=[];return out;}
   /** @param {any} w @param {any} n @param {any} envelope @param {Map<string,string>} aliases @param {any} original @param {any} policy */
   function buildLookback(w,n,envelope,aliases=new Map(),original=null,policy=null){
     const context=envelope?.lookback;if(!n||!context)return null;

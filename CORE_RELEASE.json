@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.1.1",
+  "version": "0.2.0",
   "files": [
     {
       "path": "finance-core/schemas/finance-allocation-mapping-schema.ts",
@@ -19,8 +19,8 @@
     },
     {
       "path": "finance-core/schemas/finance-native-schema.ts",
-      "bytes": 12180,
-      "sha256": "ca7c7908264861cc9402a214c297f3acc2dd49d0db1ddb10d559aab294f7a360"
+      "bytes": 12685,
+      "sha256": "a796eafa068fe82a81de2f1c0056c82be56585d2d9ea60fb7d08eb914d2c1b30"
     },
     {
       "path": "finance-core/schemas/finance-policy-precedence.ts",
@@ -33,19 +33,29 @@
       "sha256": "80ab7e20fa1a99afb792c9531a9ec5e4fe20067c23dc63adb36461ee0367b4a7"
     },
     {
+      "path": "finance-core/schemas/finance-recurring-cost-schema.ts",
+      "bytes": 756,
+      "sha256": "d551324eed5964be277972e2104674c913577609c21be591ac3143ceaab248ea"
+    },
+    {
+      "path": "finance-core/schemas/finance-reporting-policy-schema.ts",
+      "bytes": 6254,
+      "sha256": "534b2d6e844c4bf5c69c01efedcdbef3abfcdcdcfbfebdc416a9e7ae991e17f3"
+    },
+    {
       "path": "finance-core/schemas/finance-reporting-window-schema.ts",
       "bytes": 2174,
       "sha256": "1b068563fe250cf5e3bd5a8e682e85d992816987380603146953a0560b948f7e"
     },
     {
       "path": "finance-core/schemas/finance-snapshot-schema.ts",
-      "bytes": 4928,
-      "sha256": "f3334c4c730605f6fce6f523145aee0d40faf402199d9b7ed805ecd51c33514e"
+      "bytes": 4956,
+      "sha256": "0a54cb36c8fd0c825dd9f1fe19d031bd22bd62f3746de92ec348d8df5403bc48"
     },
     {
       "path": "finance-core/schemas/workspace-schema.ts",
-      "bytes": 4706,
-      "sha256": "5d110bcc7f40794d0bf5288a5548cb1a391ec8007189e1f1a69f33f00f10b626"
+      "bytes": 4980,
+      "sha256": "97783a2c7a54d31f74378c1858b897591977a6bd86116bcc4c3571592e0ccf9b"
     },
     {
       "path": "finance-core/ui/ledger-shell.html",
@@ -59,23 +69,23 @@
     },
     {
       "path": "public/finance-core/effective-ledger.js",
-      "bytes": 19921,
-      "sha256": "aab7b11392b2f5ed94f7353e8c47d32a9b84e1e7ad052e90f758439a3da1774d"
+      "bytes": 20772,
+      "sha256": "93c838e7b4ea012a9df88924919576f070d100d236790b84cec88c54495a39d1"
     },
     {
       "path": "public/finance-core/portfolio-model.js",
-      "bytes": 16353,
-      "sha256": "41cce97ef99f3a091f670f21d25a87518af43c960e819f90a0f2669d681e7cef"
+      "bytes": 17052,
+      "sha256": "708bc7ea6aee9a966ff673278cbe22dc8f9150d5677618348be994c44d592cbf"
     },
     {
       "path": "public/finance-core/read-only-dashboard.js",
-      "bytes": 73630,
-      "sha256": "031ba70e0275aa8f7475cd972709f4e3999b0572e8b8f8a69ac05bf0cecc29cc"
+      "bytes": 73674,
+      "sha256": "9b1f400f11ad7ccad9225d9bc71479eb533aba92524c3a23bf615084f3788c41"
     },
     {
       "path": "public/finance-core/read-only-model.js",
-      "bytes": 32470,
-      "sha256": "e291619da7d2c7d15a5dec36bae38f498cd1a9ba6a46d413ba0db62996bed211"
+      "bytes": 32719,
+      "sha256": "66801e33ee52dddffb88739645187433888e46d7c53901cb6ecb772e5500f605"
     },
     {
       "path": "public/pulse.svg",

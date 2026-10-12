@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { nativeSnapshotSchema, nativeView, type NativeSnapshot } from "./finance-native-schema.ts";
+import { nativeSnapshotSchema, nativeView } from "./finance-native-schema.ts";
 
 const text = z.string().max(2000);
 const id = z.string().min(1).max(120).regex(/^[a-zA-Z0-9_.:-]+$/);
@@ -52,9 +52,9 @@ export const financeSnapshotSchema = z.object({
   if (new Set(s.spending.monthly.map(r => r.month)).size !== s.spending.monthly.length) error("Duplicate spending months.");
 });
 // Keep validation and read projection on the same injected application schema.
-export function createSnapshotAdapter<T extends z.ZodType<NativeSnapshot>>(nativeSchema:T){return {
+export function createSnapshotAdapter<T extends z.ZodTypeAny>(nativeSchema:T,project:(s:z.infer<T>)=>ReturnType<typeof nativeView>=nativeView){return {
  snapshotWriteSchema:z.object({expectedRevision:z.number().int().nonnegative(),snapshot:z.union([financeSnapshotSchema,nativeSchema])}).strict(),
- snapshotView:(s:unknown)=>{const parsed=nativeSchema.safeParse(s);return parsed.success?nativeView(parsed.data):financeSnapshotSchema.parse(s);},
+ snapshotView:(s:unknown)=>{const parsed=nativeSchema.safeParse(s);return parsed.success?project(parsed.data):financeSnapshotSchema.parse(s);},
 };}
 export const {snapshotWriteSchema,snapshotView}=createSnapshotAdapter(nativeSnapshotSchema);
 export type FinanceSnapshot = z.infer<typeof financeSnapshotSchema>;

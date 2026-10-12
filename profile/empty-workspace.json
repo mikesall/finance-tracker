@@ -35,5 +35,7 @@
   "audit": [],
   "budgetHistory": [],
   "importHistory": [],
-  "housingPlan": []
+  "unclassifiedCategoryIds": [
+    "other"
+  ]
 }

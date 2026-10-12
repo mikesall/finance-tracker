@@ -114,7 +114,7 @@ test('composition totals use all investment-plus-cash families and never invent 
  const pf={denominator:10001,families:[{valueCents:6500,targetPercent:60},{valueCents:3501,targetPercent:null}]},before=JSON.stringify(pf);let t=M.compositionTotals(pf);assert.equal(t.valueCents,10001);assert.equal(t.actualPercent,100);assert.equal(t.targetPercent,null);assert.equal(t.reconciles,true);assert.equal(JSON.stringify(pf),before);pf.families[1].targetPercent=40;assert.equal(M.compositionTotals(pf).targetPercent,100);pf.families[1].valueCents=null;assert.equal(M.compositionTotals(pf).valueCents,null);assert.equal(M.compositionTotals(pf).actualPercent,null);assert.equal(M.compositionTotals({denominator:0,families:[]}).actualPercent,null);
 });
 test('sentence-case UI labels preserve source names, tickers, acronyms and canonical keys',()=>{
- for(const [before,after] of [['Annual Budget','Annual budget'],['52-Week Spend','52-week spend'],['Total Assets','Total assets'],['12 Mo','12 mo.']])assert.equal(M.sentenceLabel(before),after);for(const value of ['US stock','TIPS','AI/data centers','VTI','Whole Foods Market','balanced_multi_asset'])assert.equal(M.sentenceLabel(value),value);
+ for(const [before,after] of [['Annual Budget','Annual budget'],['52-Week Spend','52-week spend'],['Total Assets','Total assets'],['12 Mo','12 mo.']])assert.equal(M.sentenceLabel(before),after);for(const value of ['Domestic stock','Bond fund','Collectibles','FUNDX','Example Grocery Market','balanced_multi_asset'])assert.equal(M.sentenceLabel(value),value);
 });
 
 test('date search accepts valid English dates without timezone shifts',()=>{
