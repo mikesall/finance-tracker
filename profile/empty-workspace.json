@@ -27,6 +27,20 @@
       "annualCents": 0,
       "note": "No approved budget.",
       "budgeted": false
+    },
+    {
+      "id": "home",
+      "name": "Home",
+      "annualCents": 0,
+      "note": "Property taxes remain part of Home spending; no approved budget.",
+      "budgeted": false
+    },
+    {
+      "id": "income_tax",
+      "name": "Income taxes",
+      "annualCents": 0,
+      "note": "Confidently identified income-tax payments and refunds are excluded from spending and budgets by default; configurable in chat.",
+      "budgeted": false
     }
   ],
   "transactions": [],

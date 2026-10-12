@@ -39,3 +39,7 @@ The shell dependency test requires every loaded script, stylesheet, icon and oth
 ## Core 0.2.0 wire change
 
 This release uses native schema 1.1, optional generic recurring costs, explicit manual balance inclusion and configured unclassified categories. It removes required household and provider-specific fields. Review [data-contract.md](data-contract.md) before adoption. Existing instances must keep their stored wire contract through private validation and presentation adapters, or perform a separately authorized migration with full roundtrip and model parity checks. The updater changes code only; it cannot infer private asset selections or rewrite a weekly writer contract.
+
+## Core 0.3.0 setup inventory and tax defaults
+
+This release adds optional inventory/tax evidence to native schema 1.1. The new template writer requires a reconciled source inventory and exposes read-only `verify_finance_setup`; legacy private writers/contracts remain outside the core update and are not silently migrated. New empty profiles opt into configurable income-tax exclusion; the core applies it only when that profile opts in. Do not copy the template profile over an existing private profile. Verify exact source, policy, workspace and derived-output parity for an upgrade that only adopts the new core.

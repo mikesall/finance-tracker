@@ -8,6 +8,7 @@ const pattern=z.string().max(500).refine(s=>{try{new RegExp(s,"i");return true;}
 export const reportingPolicySchema=z.object({
  policyId:id,issuedAt:z.string().datetime({offset:true}),authority:text.min(1),
  accountPresentationMetadata:z.array(z.object({accountId:z.string().regex(/^acct_[a-f0-9]{24}$/),sourceLabel:text,sourceInstitution:text,institution:text.min(1),name:text.min(1),mask:z.string().regex(/^\d{4}$/).nullable(),verifiedAt:z.string().datetime({offset:true}),authority:text.min(1)}).strict()).max(1000).refine(rows=>new Set(rows.map(r=>r.accountId)).size===rows.length,"Account presentation identities must be unique.").optional(),
+ incomeTaxTreatment:z.enum(['exclude','include']).optional(),
  spendingExclusions:z.object({categoryIds:z.array(id).max(50),authority:text.min(1),reason:text.min(1),confirmedAt:z.string().datetime({offset:true})}).strict().optional(),
  clarifications:z.array(z.object({id,status:z.enum(["open","resolved"]),question:text.min(1),context:text,sourceKeys:z.array(text).max(100),createdAt:z.string().datetime({offset:true}),resolvedAt:z.string().datetime({offset:true}).nullable(),answer:text.nullable()}).strict()).max(200).optional(),
  portfolioReporting:z.object({

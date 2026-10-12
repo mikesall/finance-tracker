@@ -1,1 +1,1 @@
-globalThis.FinanceProfile={title:'Personal ledger',timezone:'UTC',categorySlugs:{other:'other'},spendingColorOrder:[],assetColorOrder:[],familyClasses:{},familyDefinitions:[{id:'unclassified',label:'Unclassified'}]};
+globalThis.FinanceProfile={title:'Personal ledger',timezone:'UTC',incomeTaxDefaults:{incomeCategoryId:'income_tax'},sourceCategoryIds:{'Income taxes':'income_tax','Home':'home'},categorySlugs:{other:'other'},spendingColorOrder:[],assetColorOrder:[],familyClasses:{},familyDefinitions:[{id:'unclassified',label:'Unclassified'}]};

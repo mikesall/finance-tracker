@@ -1,6 +1,6 @@
 > **Copy this to your dot:**
 >
-> Use https://github.com/mikesall/finance-tracker to create my private finance dashboard, following its setup instructions. I authorize reading my own connected ChatGPT Finances transaction dates, descriptions, amounts and categories, accounts, balances and holdings, and transferring and storing the necessary data only in my owner-private dashboard and its private Site plugin. Suggest personalized budgets and portfolio targets for my review. Keep my financial data out of the public repository; do not change bank accounts or make trades.
+> Use https://github.com/mikesall/finance-tracker to create my private finance dashboard, following its setup instructions. I authorize reading my own connected ChatGPT Finances transaction dates, descriptions, amounts and categories, linked and manual accounts, assets, liabilities, valuations, balances and holdings, and transferring and storing the necessary data only in my owner-private dashboard and its private Site plugin. Suggest personalized budgets and portfolio targets for my review. Keep my financial data out of the public repository; do not change bank accounts or make trades.
 
 
 # Finance Tracker
@@ -9,7 +9,7 @@ A spending and portfolio dashboard template for **one private ChatGPT Site per p
 
 **Start with the request above.** Having ChatGPT Finances connected is necessary but does not by itself establish that private Sites, a Site MCP plugin, or unattended refresh are available in your account. Your dot checks each capability and tells you the smallest missing step. Edit the data scope before sending if desired. This request does not override platform confirmations or authorize new persistent credentials, grants or legal agreements. Automatic updates are optional; your dot will ask about cadence after setup unless you already requested it.
 
-You can ask your dot to change categories, budgets and portfolio allocation targets in chat.
+You can ask your dot to change categories, budgets, tax treatment and portfolio allocation targets in chat. New profiles exclude confidently identified income-tax payments and refunds from spending and budgets while retaining them in Transactions. Property taxes stay in Home; sales tax stays in its purchase. Ambiguous government payments need clarification.
 
 The dashboard covers spending categories, period comparisons, transaction review, budgets, holdings and asset allocation. Missing coverage and unknown values stay visible. It uses USD and separates suggested budgets and portfolio targets from your approved choices. Routine data refresh writes private storage without rebuilding the website; your categorization, splits, overrides and budget decisions are kept separately.
 

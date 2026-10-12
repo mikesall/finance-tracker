@@ -31,9 +31,13 @@ globalThis.EffectiveLedger = (() => {
     if(!categories.some(c=>c.id===id))categories.push({id,name:t.reportingCategory||'Unclassified source',annualCents:0,budgeted:false,note:'Reporting category from the current private source; no allowance approved.'});
     return id;
   }
-  function sourceBase(t,w,categories,id=t.id,policy=null){return {
+  function sourceBase(t,w,categories,id=t.id,policy=null){
+    const defaults=globalThis.FinanceProfile?.incomeTaxDefaults,assessment=defaults?t.taxAssessment:null;
+    const tax=assessment?.confidence==='high'&&['income','property','sales'].includes(assessment.kind)?assessment:defaults&&(assessment||t.reportingCategory==='Income taxes')?{kind:'ambiguous',confidence:'unknown',basis:assessment?.basis||'Income-tax identity is not established by a category label alone.'}:null;
+    const label=tax?.kind==='income'?'Income taxes':tax?.kind==='property'?'Home':tax?.kind==='ambiguous'?'Other / needs review':null,classified=label?{...t,reportingCategory:label}:t;
+    return {
     id,date:t.date,amountCents:Math.round(t.amount*100),merchant:t.merchant,description:t.merchant,account:t.account,
-    ...(t.classificationState?{classificationState:t.classificationState}:{}),category:categoryId(t,w,categories,policy),subcategory:t.reportingSubcategory||(t.sourceDetailedCategory||'').replaceAll('_',' '),treatment:sourceTreatment(t),label:t.merchant,note:'',review:[...t.flags],evidence:t.classificationBasis,
+    ...(t.classificationState?{classificationState:t.classificationState}:{}),category:categoryId(classified,w,categories,policy),subcategory:t.reportingSubcategory||(t.sourceDetailedCategory||'').replaceAll('_',' '),treatment:tax?.kind==='income'?'tax':sourceTreatment(classified),...(tax?{taxAssessment:copy(tax),taxNeedsClarification:tax.kind==='ambiguous'}:{}),label:t.merchant,note:'',review:[...t.flags],evidence:t.classificationBasis,
     sourceCategory:t.sourceCategory,sourceDetail:t.sourceDetailedCategory||'',sourceConfidence:t.sourceConfidence,linkedTransfer:t.hasTransferLink,source:'ChatGPT Finances snapshot',splits:[],
   };}
   function partsFor(t){
@@ -131,6 +135,8 @@ globalThis.EffectiveLedger = (() => {
       t.sourcePaymentEligible=source?expenseKinds.has(source.kind):!['income','transfer','outside','unresolved'].includes(t.treatment);
       t.paymentEligible=!['income','transfer','outside','unresolved'].includes(t.treatment);
       t.spendingExclusionCategories=[...(policy?.spendingExclusions?.categoryIds||[])];
+      if(profile.incomeTaxDefaults&&(policy?.incomeTaxTreatment||'exclude')==='exclude')t.spendingExclusionCategories.push(mapped(profile.incomeTaxDefaults.incomeCategoryId));
+      if(t.taxNeedsClarification&&t.category!==mapped(base.category)&&(Object.hasOwn(o,'category')||Object.hasOwn(preserved,'category')||appliedRules.length||rule))t.taxNeedsClarification=false;
       t.classificationOrigin=Object.keys(o).length?'Saved item correction':Object.keys(preserved).length?'Preserved historical item decision':appliedRules.length?'Owner-confirmed reporting policy':rule?'Saved exact-merchant rule':source?'Validated source reporting classification':'Saved historical classification';
       t.edited=!!Object.keys(o).length;t.ruleApplied=!!rule;
       const warnings=policyNotes.filter(note=>/unresolved|estimate|disputed|pending|moving|not confirmed/i.test(note));
@@ -156,7 +162,7 @@ globalThis.EffectiveLedger = (() => {
     const warningResolutions=policyRules.filter(r=>r.resolvedSourceWarning&&rows.some(t=>t.appliedPolicyRules.includes(r.id))&&rows.filter(t=>t.appliedPolicyRules.includes(r.id)).every(t=>t.treatment===r.treatment));
     const sourceWarnings=(n?.metadata.warnings||[]).map(note=>clarifyText(warningResolutions.find(r=>matches(r.resolvedSourceWarning.pattern,note))?.resolvedSourceWarning.replacement||note));
     const meta=n?{...w.meta,asOf:n.metadata.retrievedAt.slice(0,10),queriedAt:n.metadata.retrievedAt,coverageStart:n.metadata.period.start,coverageEnd:n.metadata.period.end,baselineStart:n.metadata.period.start,baselineEnd:n.metadata.period.end,sourceFreshness:n.metadata.sourceFreshness,coverageComplete:false,sourceFile:'Connected ChatGPT Finances snapshot',sourceCount:n.transactions.length,accounts:n.accounts.map(a=>a.label),limitations:[...sourceWarnings,'All-account completeness and economic/ongoing spending remain unresolved. Saved history outside the current source result is retained separately.']}:{...w.meta};
-    const result={rows,parts,categories:effectiveCategories,...((policy?.recurringCosts||w.recurringCosts)?{recurringCosts:[...new Map([...(policy?.recurringCosts||[]),...(w.recurringCosts||[])].map(r=>[r.id,copy(r)])).values()]}:{}),meta,sourceCount:n?.transactions.length??0,conflictCount:rows.filter(t=>t.splitConflict).length,economicSpendingCents:n?null:undefined,ongoingBaselineCents:n?null:undefined,policy,...(profile.classificationDiagnostics?.(rows,profileContext)||{}),sourceWarnings,pendingRefundCount:rows.filter(t=>t.sourceState==='current'&&t.reportingStatus==='refund_pending'&&t.amountCents>0).length,pendingRefundCents:rows.filter(t=>t.sourceState==='current'&&t.reportingStatus==='refund_pending'&&t.amountCents>0).reduce((a,t)=>a+t.amountCents,0),ongoingExcluded:rows.filter(t=>['one_time','discontinued','transfer','income','outside'].includes(t.treatment))};
+    const result={rows,parts,categories:effectiveCategories,...(profile.incomeTaxDefaults?{defaultSpendingExclusionCategories:(policy?.incomeTaxTreatment||'exclude')==='exclude'?[w.sourceCategoryMappings?.[profile.incomeTaxDefaults.incomeCategoryId]||policy?.categoryAliases?.[profile.incomeTaxDefaults.incomeCategoryId]||profile.incomeTaxDefaults.incomeCategoryId]:[]}:{}),...((policy?.recurringCosts||w.recurringCosts)?{recurringCosts:[...new Map([...(policy?.recurringCosts||[]),...(w.recurringCosts||[])].map(r=>[r.id,copy(r)])).values()]}:{}),meta,sourceCount:n?.transactions.length??0,conflictCount:rows.filter(t=>t.splitConflict).length,economicSpendingCents:n?null:undefined,ongoingBaselineCents:n?null:undefined,policy,...(profile.classificationDiagnostics?.(rows,profileContext)||{}),sourceWarnings,pendingRefundCount:rows.filter(t=>t.sourceState==='current'&&t.reportingStatus==='refund_pending'&&t.amountCents>0).length,pendingRefundCents:rows.filter(t=>t.sourceState==='current'&&t.reportingStatus==='refund_pending'&&t.amountCents>0).reduce((a,t)=>a+t.amountCents,0),ongoingExcluded:rows.filter(t=>['one_time','discontinued','transfer','income','outside'].includes(t.treatment))};
     return profile.finalizeLedger?.({result,w,policy,clarifyText})||result;
   }
   function aggregate(parts){

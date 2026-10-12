@@ -1,4 +1,5 @@
 import { z } from "zod";
+import {requireFinanceInventory} from "../finance-core/schemas/finance-inventory-schema.ts";
 import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { financeSnapshots } from "@/db/schema";
@@ -21,6 +22,7 @@ export async function writeSnapshot(input: unknown) {
   const parsed = snapshotWriteSchema.safeParse(input);
   if (!parsed.success) throw new SnapshotError(parsed.error.issues.map(x=>`${x.path.join(".")}: ${x.message}`).slice(0,5).join("; "));
   const {snapshot, expectedRevision} = parsed.data;
+  try{requireFinanceInventory(snapshot as any);}catch(e){throw new SnapshotError(e instanceof Error?e.message:"Source inventory reconciliation failed.");}
   const view=snapshotView(snapshot);
   const data = canonicalJson(snapshot);
   if (new TextEncoder().encode(data).length > 5_000_000) throw new SnapshotError("Snapshot exceeds 5 MB.",413);

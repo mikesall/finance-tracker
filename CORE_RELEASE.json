@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.2.2",
+  "version": "0.3.0",
   "files": [
     {
       "path": "finance-core/schemas/finance-allocation-mapping-schema.ts",
@@ -13,14 +13,19 @@
       "sha256": "87ade09f88f0c70c2a40b49540fa42e21f9804e15c338bade4273683553d0e29"
     },
     {
+      "path": "finance-core/schemas/finance-inventory-schema.ts",
+      "bytes": 8319,
+      "sha256": "2c0af62807c5c7c9c6d0b072593fe602ea70b537779eb44c261117fc48dadf94"
+    },
+    {
       "path": "finance-core/schemas/finance-lookback-schema.ts",
       "bytes": 3174,
       "sha256": "d52b20034e52280d65fe28b7f44ad0656d47e54cccf597651aba8182d3545b53"
     },
     {
       "path": "finance-core/schemas/finance-native-schema.ts",
-      "bytes": 12685,
-      "sha256": "a796eafa068fe82a81de2f1c0056c82be56585d2d9ea60fb7d08eb914d2c1b30"
+      "bytes": 13188,
+      "sha256": "db39d9692513432d4773a24e1fa53baf3762a40afeb9991c7f99d6607b03e0be"
     },
     {
       "path": "finance-core/schemas/finance-policy-precedence.ts",
@@ -39,8 +44,8 @@
     },
     {
       "path": "finance-core/schemas/finance-reporting-policy-schema.ts",
-      "bytes": 6254,
-      "sha256": "534b2d6e844c4bf5c69c01efedcdbef3abfcdcdcfbfebdc416a9e7ae991e17f3"
+      "bytes": 6316,
+      "sha256": "cd131a853fbf5ff1a451f21b979390a3b2f415b4e8cc9f84f7fe7f43c5bb8a36"
     },
     {
       "path": "finance-core/schemas/finance-reporting-window-schema.ts",
@@ -69,8 +74,8 @@
     },
     {
       "path": "public/finance-core/effective-ledger.js",
-      "bytes": 20772,
-      "sha256": "93c838e7b4ea012a9df88924919576f070d100d236790b84cec88c54495a39d1"
+      "bytes": 22195,
+      "sha256": "5e1e29c23e5f465a30ae4d084da20d909cce97f6fd5f9db26ded5baf76b1c12f"
     },
     {
       "path": "public/finance-core/portfolio-model.js",
@@ -84,8 +89,8 @@
     },
     {
       "path": "public/finance-core/read-only-model.js",
-      "bytes": 33935,
-      "sha256": "f020b0f028a344e43bf20986921e28e65c7ffeeded64833a68992617262705fd"
+      "bytes": 35154,
+      "sha256": "e52cacf378ebf5524fbaab2e8493c8bc6bf1fe2d1f4d397dc833cfca35ac0cfa"
     },
     {
       "path": "public/pulse.svg",
