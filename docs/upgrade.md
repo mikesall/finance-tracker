@@ -65,3 +65,7 @@ Fixes all-assets composition omitting positive credit/loan balances. These evide
 ## Core/template 0.5.2 independent target comparison and tax-question deduplication
 
 A saved explicit target scope now drives its own Actual vs. Target projection, even when Composition uses another scope. Composition retains all assets and hides incompatible target columns; the separate comparison uses its own denominator for rows, percentages, dollar amounts and tooltips. No stored weight, residence target, source or policy value changes. Missing/invalid scope remains unresolved. Saved tax-purpose questions covering the same source key suppress generated duplicates; unrelated questions and tax uncertainty remain. Adopt core normally and review the refresh-contract wording/template version separately; contract 6 and wire 1.1 are unchanged.
+
+## Core/template 0.5.3 conservative tax-purpose matching
+
+Tightens only clarification deduplication: canonical tax-type IDs retain their intent, while legacy free text must directly ask tax type/purpose or offer tax-purpose alternatives. Merely mentioning a tax alongside “or”, “type” or “kind” is insufficient. Unrelated date, duplicate, receipt and refund-destination questions preserve the generated unresolved tax-purpose question, whether open or resolved. No schema, data, policy, target or portfolio comparison changes. Apply the normal pinned core update; contract 6 and wire 1.1 remain unchanged.

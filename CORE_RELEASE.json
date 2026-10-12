@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.5.2",
+  "version": "0.5.3",
   "files": [
     {
       "path": "finance-core/schemas/finance-allocation-mapping-schema.ts",
@@ -94,8 +94,8 @@
     },
     {
       "path": "public/finance-core/read-only-model.js",
-      "bytes": 37772,
-      "sha256": "52fcfac014e7d424892f4390688a7682e095487b211f303ce7b1b8440d26d0da"
+      "bytes": 38693,
+      "sha256": "774396f5abe33b06c5828cd9e18ae5909b19cc4d06c571437b0f872142fa7b68"
     },
     {
       "path": "public/pulse.svg",
