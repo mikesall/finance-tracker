@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="finance-ui-version" content="2026-10-12-typography-40"><link rel="icon" type="image/svg+xml" href="/pulse.svg?v=48">
+<meta name="finance-ui-version" content="core-0.2.1"><link rel="icon" type="image/svg+xml" href="/pulse.svg?v=core-0.2.1">
 <meta name="robots" content="noindex,nofollow"><meta name="color-scheme" content="light">
 
 <title>__FINANCE_PAGE_TITLE__</title>
@@ -149,7 +149,7 @@ body{font-size:var(--body-text-size)}
 .panel-head h2{font-size:17px;line-height:1.5}
 .category-period-controls{display:flex;align-items:center;gap:8px}.category-period-controls .segmented{margin:0}.spending-metrics .label{gap:6px}
 .budget-read-table{table-layout:fixed;min-width:920px}.budget-read-table td,.budget-read-table th{padding-left:24px;padding-right:24px}.budget-read-table td.difference-percent-cell,.budget-read-table th:last-child{padding-right:56px}.budget-read-table .category-detail-icon{right:20px}.budget-read-table .difference-values{grid-template-columns:minmax(0,1fr) 10ch;column-gap:24px}.budget-read-table .table-total td,.sidebar-detail-table .table-total td{border-top:1px solid #000}
-.budget-difference.difference-over{color:#b65b00}
+.budget-difference.difference-over{color:#FF874A}
 .chart-layout{grid-template-columns:minmax(0,1fr) 290px}.chart-category-panel{padding-right:32px;padding-left:20px}
 .chart-category-panel input[type=checkbox]{appearance:none;-webkit-appearance:none;position:relative;width:17px;height:17px;min-width:17px;padding:0;box-sizing:border-box;margin:0;border:1px solid #717984;border-radius:4px;background:#fff;cursor:pointer}
 .chart-category-panel input[type=checkbox]:checked{background:var(--category-color);border-color:var(--category-color)}
@@ -183,6 +183,23 @@ body{font-size:var(--body-text-size)}
 .composition-panel .allocation-family-table{min-width:0;overflow-x:auto}.composition-panel .allocation-family-table .data-table{min-width:448px}
 .category-detail-body .sidebar-detail-table th.num{white-space:nowrap;padding-inline:7px}
 .sidebar-detail-table[data-sidebar-table="merchants"]{min-width:400px}
+
+/* Visual refresh: four metrics, proportional legend and consistent table type. */
+:root{--finance-gradient:linear-gradient(90deg,#0456DE 0%,#00D8FF 49.52%,#0DFFC7 100%);--finance-orange:#FF874A}
+.spending-metrics{grid-template-columns:repeat(4,minmax(0,1fr))}
+.chart-layout{grid-template-columns:minmax(0,3fr) minmax(0,1fr)}
+.chart-category-panel{display:flex;flex-direction:column;min-width:0;border-left:1px solid #e5e7eb;border-top:0;padding:21px 20px 24px}
+.chart-category-header{flex:none;gap:8px}.chart-category-header button{white-space:nowrap}.chart-category-header h3{font-size:17px;line-height:25.5px}
+.chart-category-rows{flex:1;display:flex;flex-direction:column;justify-content:space-between;gap:3px;min-height:0}
+.chart-category-panel label{flex:1;grid-template-columns:17px minmax(0,1fr) auto;gap:8px;padding:7px 6px;margin:0 -6px;border-radius:6px;min-height:32px}
+.chart-category-panel label:hover,.chart-category-panel label.legend-highlighted{background:#f0f1f3}
+.spending-segment{transition:opacity .12s}.spending-segment.legend-muted{opacity:.2}
+.chart-category-footer{flex:none}.chart-budget-note{min-height:30px;line-height:15px;margin:3px 0 0}.chart-budget-note[hidden]{display:block!important;visibility:hidden}
+.budget-read-table tbody>tr:not(.table-total) td,.budget-read-table tbody>tr:not(.table-total) .category-cell b,.budget-read-table tbody>tr:not(.table-total) .category-detail-link,.budget-read-table tbody>tr:not(.table-total) .difference-amount,.budget-read-table tbody>tr:not(.table-total) .difference-percent{font-size:var(--table-body-size);font-weight:400}
+.budget-read-table .table-total .difference-amount,.budget-read-table .table-total .difference-percent{font-size:inherit;font-weight:inherit}
+.sort-button.active{color:#000}
+@media(max-width:900px){.chart-layout{grid-template-columns:minmax(0,1fr)}.chart-category-panel{border-left:0;border-top:1px solid #e5e7eb;padding:20px 28px 24px}.chart-category-rows{gap:4px}.chart-category-panel label{flex:none;min-height:40px}.spending-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(prefers-reduced-motion:reduce){.spending-segment{transition:none}}
 </style></head><body>
 <div id="loading-workspace" role="status" class="loading-workspace">Opening your private workspace…</div>
 <div class="app" inert>
@@ -201,6 +218,6 @@ body{font-size:var(--body-text-size)}
 
 <dialog id="request-dialog" class="category-drawer category-detail-drawer" aria-labelledby="request-dialog-title"></dialog>
 <dialog id="transaction-dialog" class="category-drawer category-detail-drawer" aria-labelledby="transaction-detail-title"></dialog>
-<dialog id="category-dialog" class="category-drawer category-detail-drawer" aria-labelledby="category-detail-title"></dialog><script src="/finance-profile.js?v=48"></script>
-<script src="/finance-core/effective-ledger.js?v=48" defer></script><script src="/finance-core/read-only-model.js?v=48" defer></script><script src="/finance-core/portfolio-model.js?v=48" defer></script><script src="/dashboard-requests.js?v=48" defer></script><script src="/finance-core/read-only-dashboard.js?v=48" defer></script>
+<dialog id="category-dialog" class="category-drawer category-detail-drawer" aria-labelledby="category-detail-title"></dialog><script src="/finance-profile.js?v=core-0.2.1"></script>
+<script src="/finance-core/effective-ledger.js?v=core-0.2.1" defer></script><script src="/finance-core/read-only-model.js?v=core-0.2.1" defer></script><script src="/finance-core/portfolio-model.js?v=core-0.2.1" defer></script><script src="/dashboard-requests.js?v=core-0.2.1" defer></script><script src="/finance-core/read-only-dashboard.js?v=core-0.2.1" defer></script>
 </body></html>
