@@ -7,7 +7,11 @@ export function verifyFinanceSetupState(snapshot:any,policy:any,portfolio:any,pr
  if(!familyCoverage?.ok)issues.push('Portfolio hierarchy must preserve every class exactly once, group recognized broad siblings, justify additional families, and reconcile dollars, percentages and targets.');
  if(portfolio?.composition?.scope==='all_assets'&&portfolio?.allocationAvailable&&portfolio.denominator!==portfolio.metrics?.totalAssets)issues.push('All-assets composition must reconcile to positive assets, including selected manual assets, with liabilities separate.');
  if(!portfolio?.allocationAvailable)warnings.push('Complete asset composition is unavailable; review missing values and reconciliation without presenting a partial total as complete.');
- if(portfolio?.composition?.targetsCompatible===false)issues.push('Portfolio targets need an explicit scope matching the composition; saved weights have not been rescaled.');
+ const targetComparison=portfolio?.targetComparison;
+ if(portfolio?.composition?.targetsCompatible===false){
+  if(!targetComparison||!['all_assets','investments_and_cash'].includes(targetComparison.scope)||targetComparison.scope!==portfolio.composition.targetScope)issues.push('Portfolio targets need a valid explicit comparison scope; saved weights have not been rescaled.');
+  else {if(!targetComparison.familyCoverage?.ok)issues.push('Target-scope comparison hierarchy or totals do not reconcile.');if(!targetComparison.allocationAvailable)warnings.push('Target-scope actual allocation is unavailable; unknown values are preserved.');}
+ }
  const availability=portfolio?.metricAvailability||{};
  for(const key of ['totalAssets','totalLiabilities','netWorth','liquidNetWorth']){
   const a=availability[key],value=portfolio?.metrics?.[key];
@@ -32,5 +36,5 @@ export function verifyFinanceSetupState(snapshot:any,policy:any,portfolio:any,pr
    comparison={basis:scope.basis,excludeUnresolvedTaxes:scope.excludeUnresolvedTaxes,excludedSourceKeyCount:scope.excludedSourceKeys.length,excludedAllocationCount:excluded.length,reconciles:parts.length===included.length+excluded.length&&sum(parts)===sum(included)+sum(excluded)};
   }
  }
- return {...inventory,ok:inventory.ok&&issues.length===0,issues:[...inventory.issues,...issues],verificationScope:['source_inventory','manual_inclusion','portfolio_family_coverage','component_metric_availability','amount_evidence_vs_freshness','budget_comparison_scope'],inventoryOk:inventory.ok,presentationOk:issues.length===0,familyCoverage,composition:portfolio?.composition||null,metricAvailability:availability,manualEvidence:evidence,budgetComparison:comparison,warnings};
+ return {...inventory,ok:inventory.ok&&issues.length===0,issues:[...inventory.issues,...issues],verificationScope:['source_inventory','manual_inclusion','portfolio_family_coverage','component_metric_availability','amount_evidence_vs_freshness','budget_comparison_scope'],inventoryOk:inventory.ok,presentationOk:issues.length===0,familyCoverage,composition:portfolio?.composition||null,targetComparison:targetComparison?{scope:targetComparison.scope,label:targetComparison.label,denominator:targetComparison.denominator,allocationAvailable:targetComparison.allocationAvailable,familyCoverage:targetComparison.familyCoverage}:null,metricAvailability:availability,manualEvidence:evidence,budgetComparison:comparison,warnings};
 }

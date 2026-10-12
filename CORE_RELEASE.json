@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.5.1",
+  "version": "0.5.2",
   "files": [
     {
       "path": "finance-core/schemas/finance-allocation-mapping-schema.ts",
@@ -54,8 +54,8 @@
     },
     {
       "path": "finance-core/schemas/finance-setup-verification.ts",
-      "bytes": 4622,
-      "sha256": "d3dc25be07473721199db550ccfe78eae438503ad14cf057a5b4ce037a3b7be2"
+      "bytes": 5333,
+      "sha256": "649f68754ae20c4cae4ba86f9ce91490edab2b95149a452fe5ca2a3fd7098254"
     },
     {
       "path": "finance-core/schemas/finance-snapshot-schema.ts",
@@ -84,18 +84,18 @@
     },
     {
       "path": "public/finance-core/portfolio-model.js",
-      "bytes": 27298,
-      "sha256": "fa029751c6684781245b84701197d6be14f8cbf951e4b48135491062304e16f3"
+      "bytes": 28467,
+      "sha256": "641be568e9cbeecb43fc5d12a4392d79f6f60bdc7da35146aef78ce1a083e83b"
     },
     {
       "path": "public/finance-core/read-only-dashboard.js",
-      "bytes": 76628,
-      "sha256": "4812f0933410d803f1e7e55385e0b3453cf08f35c29ac893b70cc4dc2d9649fd"
+      "bytes": 77035,
+      "sha256": "adb23476512eed18c84bd482324e3d5167d2ac6a8b4893363a2ce03ca54f7ca2"
     },
     {
       "path": "public/finance-core/read-only-model.js",
-      "bytes": 37508,
-      "sha256": "843461a687db64157fab58b58bc65284d0ae0851b9173db7883344299b184679"
+      "bytes": 37772,
+      "sha256": "52fcfac014e7d424892f4390688a7682e095487b211f303ce7b1b8440d26d0da"
     },
     {
       "path": "public/pulse.svg",

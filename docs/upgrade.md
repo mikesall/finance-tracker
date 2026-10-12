@@ -61,3 +61,7 @@ The core now aggregates recognized subclasses into genuine broad families and va
 ## Core/template 0.5.1 signed credit balances
 
 Fixes all-assets composition omitting positive credit/loan balances. These evidenced overpayments/receivables now enter once as clearly labeled receivable assets; negative debts stay separate. No source/policy migration, target reweighting, contract or wire-version change. Explicit investment-only scope is unchanged. The verifier now honors explicit custom/legacy family assignments while detecting a child placed under the wrong resolved parent; sibling coalescing applies only to inferred defaults.
+
+## Core/template 0.5.2 independent target comparison and tax-question deduplication
+
+A saved explicit target scope now drives its own Actual vs. Target projection, even when Composition uses another scope. Composition retains all assets and hides incompatible target columns; the separate comparison uses its own denominator for rows, percentages, dollar amounts and tooltips. No stored weight, residence target, source or policy value changes. Missing/invalid scope remains unresolved. Saved tax-purpose questions covering the same source key suppress generated duplicates; unrelated questions and tax uncertainty remain. Adopt core normally and review the refresh-contract wording/template version separately; contract 6 and wire 1.1 are unchanged.
