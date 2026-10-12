@@ -43,3 +43,9 @@ This release uses native schema 1.1, optional generic recurring costs, explicit 
 ## Core 0.3.0 setup inventory and tax defaults
 
 This release adds optional inventory/tax evidence to native schema 1.1. The new template writer requires a reconciled source inventory and exposes read-only `verify_finance_setup`; legacy private writers/contracts remain outside the core update and are not silently migrated. New empty profiles opt into configurable income-tax exclusion; the core applies it only when that profile opts in. Do not copy the template profile over an existing private profile. Verify exact source, policy, workspace and derived-output parity for an upgrade that only adopts the new core.
+
+## Core 0.4.0 presentation and evidence repair
+
+This release adds the `documented` manual status, taxonomy-derived families for empty mappings, independent metric availability, explicit proposal comparison scopes and a pure setup verifier. Native wire version remains 1.1. Existing private profiles, approved decisions and legacy writer contracts remain outside the updater.
+
+For an instance bootstrapped from template 0.3.0, review the generic adapter diff as a separate change: `lib/finance-effective-summary.ts`, `lib/finance-setup-verification.ts`, `lib/finance-refresh-contract.ts`, and the `verify_finance_setup` description/handler in `app/mcp/route.ts`. These enable the expanded verification and template contract 4; they are not copied by `sync-core`. Preserve custom authentication/storage adapters, hosting identity and private contracts. Review data evidence separately: changing an undated documented balance's status or adding proposal comparison scope requires an explicit evidence-based source/policy update with optimistic concurrency and readback. Never infer that a core update changed stored data.

@@ -9,7 +9,7 @@ let seq=0;async function mcp(name,args={},anonymous=false){const r=await request
 assert.equal((await mcp('read_finance_snapshot',{},true)).status,401);
 assert.equal((await request('/api/workspace',{anonymous:true})).status,401);
 const login=await request('/signin-with-chatgpt');assert.equal(login.status,302);cookie=login.headers.get('set-cookie').split(';')[0];
-const contract=await mcp('get_finance_refresh_contract');assert.equal(contract.status,200);assert.equal(contract.data.templateVersion,'0.3.0');assert.equal(contract.data.contractVersion,3);
+const contract=await mcp('get_finance_refresh_contract');assert.equal(contract.status,200);assert.equal(contract.data.templateVersion,'0.4.0');assert.equal(contract.data.contractVersion,4);
 const before=await mcp('read_finance_snapshot');assert.equal(before.data.revision,0,'Refusing to touch a populated preview.');assert.equal(before.data.snapshot,null);
 assert.match((await request('/')).data,/No financial data has been imported/);
 const initial=await mcp('initialize_finance_workspace');assert.equal(initial.status,200);assert.equal(initial.data.workspace.transactions.length,0);assert.deepEqual((await mcp('initialize_finance_workspace')).data,initial.data);
@@ -27,7 +27,7 @@ assert.equal((await mcp('initialize_finance_workspace')).data.revision,1);assert
 source.metadata.retrievedAt=new Date(Date.now()+1000).toISOString();
 assert.equal((await mcp('write_finance_snapshot',{expectedRevision:0,snapshot:source})).status,400);
 const refreshed=await mcp('write_finance_snapshot',{expectedRevision:1,snapshot:source});assert.equal(refreshed.status,200);assert.equal(refreshed.data.revision,2);assert.deepEqual((await mcp('read_finance_snapshot')).data.snapshot,source);assert.deepEqual((await request('/api/workspace')).data,workspaceBefore);assert.deepEqual((await mcp('read_finance_reporting_policy')).data,policyBefore);
-const verified=await mcp('verify_finance_setup');assert.equal(verified.status,200);assert.equal(verified.data.ok,true);assert.equal(verified.data.expectedRecords,source.accounts.length);
+const verified=await mcp('verify_finance_setup');assert.equal(verified.status,200);assert.equal(verified.data.ok,true);assert.equal(verified.data.expectedRecords,source.accounts.length);assert.equal(verified.data.presentationOk,true);assert.equal(verified.data.familyCoverage.ok,true);assert.equal(verified.data.verificationScope.length,6);
 const summary=await mcp('read_finance_effective_summary');assert.equal(summary.status,200,JSON.stringify(summary));assert.equal(summary.data.available,true);assert.equal(summary.data.sourceRevision,2);assert.equal(summary.data.workspaceRevision,1);assert.equal(summary.data.policyRevision,1);
 assert.match((await request('/')).data,/id="active-view"/);for(const asset of ['/finance-profile.js','/finance-core/effective-ledger.js','/finance-core/read-only-model.js','/finance-core/portfolio-model.js','/finance-core/read-only-dashboard.js'])assert.equal((await request(asset)).status,200);
 console.log(JSON.stringify({passed:true,syntheticOnly:true,emptyState:true,anonymousMcpAndWorkspaceDenied:true,workspaceInitializationIdempotent:true,unknownPortfolioTargetsAccepted:true,snapshotReadback:true,idempotency:true,conflictRejected:true,workspaceAndPolicyPreserved:true,effectiveSummary:true,requiredInventoryGate:true,inventoryReadbackVerified:true,runtimeAssets:true,productionAuthorizationTested:false}));

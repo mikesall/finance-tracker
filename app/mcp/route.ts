@@ -17,7 +17,7 @@ const tools=[
  readTool("get_finance_refresh_status","Read collection/coverage freshness and revision without amounts."),
  readTool("read_finance_reporting_policy","Read this owner's separate reporting policy and budget proposal or approvals."),
  readTool("read_finance_categorization_state","Read this signed-in owner's saved workspace rules and override counts."),
- readTool("verify_finance_setup","Verify every returned linked/manual account, asset and liability has a reconciled disposition and imported manual balances are selected in net worth. Missing inventory fails setup verification."),
+ readTool("verify_finance_setup","Verify every returned linked/manual account, asset and liability has a reconciled disposition and imported manual balances are selected in net worth. Checks family coverage, independent portfolio metric availability, amount evidence versus freshness, and declared budget comparison scope. Unknown values may pass only with truthful incomplete presentation."),
  readTool("read_finance_effective_summary","Reconcile imported source with this owner's policy and saved workspace."),
  {name:"write_finance_snapshot",description:"Save an explicitly authorized native financial snapshot to this owner's private Site. Does not read Finances, change banks, or edit reporting policy/workspace. Read contract/revision first and independently read back.",inputSchema:{type:"object",properties:{expectedRevision:{type:"integer",minimum:0},snapshot:refreshContract.snapshotSchema},required:["expectedRevision","snapshot"],additionalProperties:false},annotations:{readOnlyHint:false,destructiveHint:false,idempotentHint:true}},
  {name:"write_finance_reporting_policy",description:"Save an explicitly authorized separate policy, with proposed budgets distinguished from owner-approved budgets/targets. Not part of routine source refresh. Preserve existing owner edits and read back.",inputSchema:{type:"object",properties:{expectedRevision:{type:"integer",minimum:0},policy:refreshContract.policySchema},required:["expectedRevision","policy"],additionalProperties:false},annotations:{readOnlyHint:false,destructiveHint:false,idempotentHint:true}},
@@ -32,7 +32,7 @@ export async function POST(req:Request){try{const body=await readBody(req),id=bo
  try{let value:unknown;switch(body.params?.name){
  case "initialize_finance_workspace":value=await initializeWorkspace(user.userId);break;
  case "get_finance_refresh_contract":value=refreshContract;break;
- case "verify_finance_setup":value=await verifyFinanceSetup();break;
+ case "verify_finance_setup":value=await verifyFinanceSetup(user.userId);break;
  case "read_finance_snapshot":value=await readSnapshot();break;
  case "get_finance_refresh_status":value=await readStatus();break;
  case "read_finance_reporting_policy":value=await readReportingPolicy();break;

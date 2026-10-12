@@ -10,7 +10,7 @@ const collection=z.enum(inventoryCollections);
 export const financeInventorySchema=z.object({
  collectedAt:timestamp,
  collections:z.array(z.object({name:collection,status:z.enum(['complete','unavailable','not_authorized']),returnedCount:z.number().int().nonnegative().max(10000).nullable(),basis:text}).strict()).length(4),
- expected:z.array(z.object({ref:id,collection,entityId:id,kind:z.enum(['asset','liability']),nature:z.enum(['balance','alternative_valuation','redemption_claim']),value:z.number().finite().min(-1e11).max(1e11).nullable(),currency:z.literal('USD'),valuationDate:date.nullable(),sourceAsOf:timestamp.nullable(),status:z.enum(['confirmed','estimate','unverified']),basis:text,identityBasis:text}).strict()).max(10000),
+ expected:z.array(z.object({ref:id,collection,entityId:id,kind:z.enum(['asset','liability']),nature:z.enum(['balance','alternative_valuation','redemption_claim']),value:z.number().finite().min(-1e11).max(1e11).nullable(),currency:z.literal('USD'),valuationDate:date.nullable(),sourceAsOf:timestamp.nullable(),status:z.enum(['confirmed','documented','estimate','unverified']),basis:text,identityBasis:text}).strict()).max(10000),
  dispositions:z.array(z.object({ref:id,disposition:z.enum(['included','duplicate','alternative_valuation','unresolved','excluded']),targetType:z.enum(['linked_account','manual_balance']).nullable(),targetId:id.nullable(),reason:text}).strict()).max(10000),
 }).strict();
 

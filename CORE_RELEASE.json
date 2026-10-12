@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.3.0",
+  "version": "0.4.0",
   "files": [
     {
       "path": "finance-core/schemas/finance-allocation-mapping-schema.ts",
@@ -9,13 +9,13 @@
     },
     {
       "path": "finance-core/schemas/finance-budget-policy-schema.ts",
-      "bytes": 678,
-      "sha256": "87ade09f88f0c70c2a40b49540fa42e21f9804e15c338bade4273683553d0e29"
+      "bytes": 989,
+      "sha256": "d2ee98b098af3aaf56912199d4d4b268402e3369938163db765d4413754e28a7"
     },
     {
       "path": "finance-core/schemas/finance-inventory-schema.ts",
-      "bytes": 8319,
-      "sha256": "2c0af62807c5c7c9c6d0b072593fe602ea70b537779eb44c261117fc48dadf94"
+      "bytes": 8332,
+      "sha256": "0b50c8f6231db720a1a35126efdd8b12759da78f0f6d79317fa5b29eec1dcde1"
     },
     {
       "path": "finance-core/schemas/finance-lookback-schema.ts",
@@ -24,8 +24,8 @@
     },
     {
       "path": "finance-core/schemas/finance-native-schema.ts",
-      "bytes": 13188,
-      "sha256": "db39d9692513432d4773a24e1fa53baf3762a40afeb9991c7f99d6607b03e0be"
+      "bytes": 13201,
+      "sha256": "72177997b6684d4657fe35ed0772f400891d97417ebb20bcf44f00ecedd9a6b8"
     },
     {
       "path": "finance-core/schemas/finance-policy-precedence.ts",
@@ -53,6 +53,11 @@
       "sha256": "1b068563fe250cf5e3bd5a8e682e85d992816987380603146953a0560b948f7e"
     },
     {
+      "path": "finance-core/schemas/finance-setup-verification.ts",
+      "bytes": 3869,
+      "sha256": "20b3225ad0c8befd8d8d8603368341739072065a7ed57785b7cd7595a8facaa0"
+    },
+    {
       "path": "finance-core/schemas/finance-snapshot-schema.ts",
       "bytes": 4956,
       "sha256": "0a54cb36c8fd0c825dd9f1fe19d031bd22bd62f3746de92ec348d8df5403bc48"
@@ -64,8 +69,8 @@
     },
     {
       "path": "finance-core/ui/ledger-shell.html",
-      "bytes": 97348,
-      "sha256": "32f6ff0d41d2351366be471cd86a444fbcf6af6ffa4a442cd4f9500fe9cc10cd"
+      "bytes": 97594,
+      "sha256": "97d500c04d366b5c18244b0fb82bfb4409f42c12c2f2e35d48fc1000e9f7316e"
     },
     {
       "path": "public/dashboard-requests.js",
@@ -79,18 +84,18 @@
     },
     {
       "path": "public/finance-core/portfolio-model.js",
-      "bytes": 17052,
-      "sha256": "708bc7ea6aee9a966ff673278cbe22dc8f9150d5677618348be994c44d592cbf"
+      "bytes": 19552,
+      "sha256": "019011557d93854be87940fa4784af0ba60f926b807356271a08e12e077fafe9"
     },
     {
       "path": "public/finance-core/read-only-dashboard.js",
-      "bytes": 75354,
-      "sha256": "e7c32f4772968b0328a4b09f2a473343fe887a03fab2df63612f44e059c9f7f5"
+      "bytes": 76294,
+      "sha256": "78c55a1b85f0601d94b73f71010d7229566e5687b3c4b1c96c26ce2aade788aa"
     },
     {
       "path": "public/finance-core/read-only-model.js",
-      "bytes": 35154,
-      "sha256": "e52cacf378ebf5524fbaab2e8493c8bc6bf1fe2d1f4d397dc833cfca35ac0cfa"
+      "bytes": 37296,
+      "sha256": "c005263be0fca378fd6b3d6baa373a0513551179ce6a9c6590077bef53b4f433"
     },
     {
       "path": "public/pulse.svg",

@@ -1,4 +1,4 @@
-# Generic data contract (core 0.3.0)
+# Generic data contract (core 0.4.0)
 
 Native snapshots use schema `1.1`. Ask the running private Site for its contract: existing deployments may deliberately retain an older wire format through a private adapter. Never relabel or migrate stored data merely to install a core update.
 
@@ -30,3 +30,17 @@ Every imported linked/manual balance needs one included disposition. Returned co
 The empty profile opts into `incomeTaxDefaults` and provides unbudgeted Home and Income taxes categories. Optional transaction `taxAssessment` is `{kind: income|property|sales|ambiguous, confidence: high|unknown, basis: nonempty evidence}`. Only high-confidence income-tax evidence receives default income-tax exclusion. A tax category label alone is insufficient. Property tax maps to Home, sales tax stays with its purchase, and ambiguous/low-confidence tax evidence is included when it is a spending payment and generates a To clarify question. Keep uncertain transaction membership separate; do not call an unidentified transfer spending merely because its payee is a government.
 
 Policy `incomeTaxTreatment` can be `exclude` or `include`; absence means exclude only on profiles that explicitly opt into the new default. Excluded income-tax payments and signed refunds remain visible in Transactions/CSV; they contribute neither spending actuals nor budget totals. Item categories, exact receipt splits and existing explicit exclusion policies retain precedence. Resolving an ambiguity in chat should save the actual category/tax evidence (or a resolved clarification), not simply mark an unknown payment as reviewed. Core upgrades do not replace profiles, add the default to an existing owner, or rewrite old policies.
+
+## Amount evidence, freshness and metric availability
+
+Manual status `documented` means the amount has identifiable document evidence, without claiming owner confirmation, current valuation or independent bank verification. Keep absent `valuationDate` and `sourceAsOf` null; collection/record-update timestamps are not valuation dates. Record the evidence in `basis` and use the same status/value/dates in the inventory. `estimate` remains approximate and `unverified` stays unavailable for totals. The code never promotes a record by parsing its description.
+
+`metricAvailability` reports completeness, known subtotal and missing-component count separately for assets, liabilities, net worth and liquid net worth. Incomplete subtotals are never complete totals. Unknown assets do not erase known liabilities; unknown retirement/manual assets excluded from liquidity do not erase eligible liquid assets. Missing selected manual records have unknown kind. Canonical account balances define totals: known holdings cannot replace unknown balances and negative holdings reconciliation is not debt. Explicit zero investments plus an empty holdings list allows cash-only allocation.
+
+An empty `profile.familyClasses` derives display families from `portfolioReporting.taxonomy`, preserving actuals and targets. A configured map must cover every class exactly once. Setup verification checks this coverage independently of source inventory.
+
+## Proposed budget comparison scope
+
+Every active proposal needs `comparisonScope: {excludeUnresolvedTaxes: boolean, excludedSourceKeys: string[], basis: string}`. Use exact native transaction IDs for identified one-time costs or other evidence-based proposal exclusions; use an empty array if none. Set `excludeUnresolvedTaxes` to match the estimation basis, not to reclassify the payments. Merchant identity, size and generic tax-category confidence alone do not establish income-tax type. Preserve explicit property tax in Home and sales tax in its purchase.
+
+The budget table and subcategory variance use the declared scope and disclose omitted signed totals/counts. Full spending remains unchanged in the headline, chart and Transactions. Chart budget overlays are hidden when the scopes differ. Approved budgets do not inherit a stale proposal scope; approval and any confirmed spending exclusions are separate owner decisions. `verify_finance_setup` checks scope/reconciliation, family coverage, independent metric availability and amount evidence/freshness in addition to inventory. Warnings about truthful unknowns do not imply setup failure.

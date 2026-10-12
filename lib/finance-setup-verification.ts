@@ -1,4 +1,2 @@
-import {reconcileFinanceInventory} from "../finance-core/schemas/finance-inventory-schema.ts";
-import {readSnapshot} from "./finance-snapshots";
-import {readReportingPolicy} from "./finance-reporting-policy";
-export async function verifyFinanceSetup(){const [{snapshot},{policy}]=await Promise.all([readSnapshot(),readReportingPolicy()]);return reconcileFinanceInventory((snapshot||{}) as any,policy);}
+import {readEffectiveSummary} from "./finance-effective-summary";
+export async function verifyFinanceSetup(userId?:string){const summary=await readEffectiveSummary(userId);return summary.available?summary.setupVerification:{ok:false,coverageComplete:false,issues:[summary.reason],verificationScope:["source_inventory","portfolio_presentation","budget_comparison_scope"]};}
