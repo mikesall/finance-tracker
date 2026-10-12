@@ -1,6 +1,6 @@
 # Upgrade the shared core safely
 
-The canonical reusable code is the set of paths and SHA-256 digests in `CORE_RELEASE.json`: browser models/renderer, shared schemas and the ledger shell. The surrounding adapters, private `profile/`, hosting identity, database, policy, snapshots, workspace and schedules are outside that update boundary.
+The canonical reusable code is the set of paths and SHA-256 digests in `CORE_RELEASE.json`: browser models/renderer, shared schemas, the ledger shell, and exactly two additional generic assets: `public/pulse.svg` and `public/dashboard-requests.js`. This does not include the rest of `public/` or authentication/storage adapters. The request helper remains disabled by its existing private runtime configuration. The surrounding adapters, private `profile/`, hosting identity, database, policy, snapshots, workspace and schedules are outside that update boundary.
 
 For an existing private deployment, download and review a new pristine release in a different directory. Run its tests and `npm run check:release`. Then run the updater from the pristine release:
 
@@ -8,7 +8,7 @@ For an existing private deployment, download and review a new pristine release i
 node scripts/sync-core.mjs --target /absolute/path/to/private-deployment
 ```
 
-The default is a dry run. It verifies every source digest, rejects symlinks/path traversal and checks the target against its previous release manifest. If no previous manifest exists, adoption is allowed only when every current core file is already identical. A locally modified core file blocks the update; merge it deliberately and revalidate instead of forcing replacement. No force flag is provided.
+The default is a dry run. It verifies every source digest, rejects symlinks/path traversal and checks the target against its previous release manifest. If no previous manifest exists, adoption is allowed only when every current core file is already identical. A locally modified core file blocks the update; merge it deliberately and revalidate instead of forcing replacement. Newly shared assets that already exist in a deployment may be adopted only if their bytes exactly match the reviewed release; different local bytes block the update. No force flag is provided.
 
 After reviewing the dry run and backing up the private deployment, apply the exact same release:
 
@@ -33,3 +33,5 @@ After reviewing a specific published Git commit and its full file manifest:
 5. Run that private instance's compatibility, classification, window, receipt/override and reconciliation tests. Compare effective metrics with the currently deployed version. With no intended behavior change, source/policy/workspace revisions, digests and derived output must match. Privately publish through the supported Sites source helper only after those checks, and verify the existing URL and anonymous denial.
 
 Updates repeat this explicit procedure with a newly reviewed commit. Never fetch or execute latest code inside a request handler or a scheduled refresh. A private instance may keep application-specific adapters and preferences while sharing exactly the same versioned canonical core.
+
+The shell dependency test requires every loaded script, stylesheet, icon and other resource to appear in the shared manifest or the explicit private adapter allowlist. `/finance-profile.js` is the sole intentional private shell adapter. Data APIs remain outside the shared asset boundary.

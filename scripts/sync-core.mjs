@@ -12,7 +12,9 @@ const next=verifyRelease(source),manifestPath=path.join(target,'CORE_RELEASE.jso
 if(previous){
  for(const f of previous.files)verifyFile(target,f);
  const old=new Set(previous.files.map(f=>f.path));
- for(const f of next.files){const p=safePath(target,f.path);if(!old.has(f.path)&&fs.existsSync(p))throw Error(`Untracked target core file: ${f.path}`);}
+ // An existing newly shared asset can be adopted only when its bytes already
+ // match the reviewed release. A divergent file still blocks every write.
+ for(const f of next.files){const p=safePath(target,f.path);if(!old.has(f.path)&&fs.existsSync(p))verifyFile(target,f);}
 }else{for(const f of next.files)verifyFile(target,f);}
 const oldMap=new Map((previous?.files||[]).map(f=>[f.path,f])),newMap=new Map(next.files.map(f=>[f.path,f]));
 const changed=next.files.filter(f=>oldMap.get(f.path)?.sha256!==f.sha256),removed=(previous?.files||[]).filter(f=>!newMap.has(f.path));

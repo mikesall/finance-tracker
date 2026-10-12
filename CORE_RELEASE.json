@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "files": [
     {
       "path": "finance-core/schemas/finance-allocation-mapping-schema.ts",
@@ -53,6 +53,11 @@
       "sha256": "4b28fb90b898c13f39f9b48809734850fc2fa392c4334b24f9bc964440017ac2"
     },
     {
+      "path": "public/dashboard-requests.js",
+      "bytes": 7365,
+      "sha256": "e36948c619d9415738d7a78e35d76a65ae01001d836701908b950bffd309f57c"
+    },
+    {
       "path": "public/finance-core/effective-ledger.js",
       "bytes": 19921,
       "sha256": "aab7b11392b2f5ed94f7353e8c47d32a9b84e1e7ad052e90f758439a3da1774d"
@@ -71,6 +76,11 @@
       "path": "public/finance-core/read-only-model.js",
       "bytes": 32470,
       "sha256": "e291619da7d2c7d15a5dec36bae38f498cd1a9ba6a46d413ba0db62996bed211"
+    },
+    {
+      "path": "public/pulse.svg",
+      "bytes": 198,
+      "sha256": "d5691310884968de65c3261c7531a8213d43698565ba9400ea30b7ec34bc317c"
     }
   ]
 }

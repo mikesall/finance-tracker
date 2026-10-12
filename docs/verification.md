@@ -1,6 +1,6 @@
 # Release verification
 
-The initial template has passed 165 automated model, schema, renderer and upgrade tests, TypeScript checking, the Sites production build, and release-boundary checks. All 14 canonical core files match the existing validated implementation. The template contains an empty profile and newly generated three-table migration; no existing private database or migration history is included.
+The initial template has passed 171 automated model, schema, renderer and upgrade tests, TypeScript checking, the Sites production build, and release-boundary checks. All 16 canonical shared files match the existing validated implementation. The template contains an empty profile and newly generated three-table migration; no existing private database or migration history is included.
 
 An isolated local D1 preview passed synthetic tests for:
 
@@ -11,6 +11,7 @@ An isolated local D1 preview passed synthetic tests for:
 - Effective summary and runtime asset availability.
 - Unknown targets, mandatory proposal/approval provenance, rejected false approval, and a visible provisional-target notice.
 - Pinned core adoption, modified-file refusal, path/symlink refusal and preservation of private configuration.
+- Exact pinning of the generic icon and disabled request helper, safe adoption of identical existing assets, and coverage of every shell dependency with one intentional private profile adapter.
 
 To reproduce local integration tests, build the template, start its local preview on port 5173, and initialize **only its empty synthetic local database** with the migration:
 

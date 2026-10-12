@@ -2,9 +2,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 export const roots=['public/finance-core/','finance-core/schemas/','finance-core/ui/'];
+// Exact generic shell dependencies; never broaden this to all of public/.
+export const assets=['public/pulse.svg','public/dashboard-requests.js'];
 export const digest=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
 export function safePath(root,relative){
- if(typeof relative!=='string'||relative.includes('\\')||relative.startsWith('/')||relative.split('/').some(p=>!p||p==='.'||p==='..')||!roots.some(r=>relative.startsWith(r)))throw Error('Invalid core path.');
+ if(typeof relative!=='string'||relative.includes('\\')||relative.startsWith('/')||relative.split('/').some(p=>!p||p==='.'||p==='..')||(!roots.some(r=>relative.startsWith(r))&&!assets.includes(relative)))throw Error('Invalid core path.');
  const target=path.join(root,relative);let current=root;
  for(const part of relative.split('/')){current=path.join(current,part);if(fs.existsSync(current)&&fs.lstatSync(current).isSymbolicLink())throw Error('Symlinks are not permitted in core paths.');}
  return target;
@@ -19,5 +21,5 @@ export function readManifest(root){
 }
 export function verifyFile(root,f){const file=safePath(root,f.path);if(!fs.existsSync(file)||!fs.lstatSync(file).isFile())throw Error(`Missing core file: ${f.path}`);const bytes=fs.readFileSync(file);if(bytes.length!==f.bytes||digest(bytes)!==f.sha256)throw Error(`Modified core file: ${f.path}`);}
 export function listCore(root){const files=[];function walk(relative){const full=path.join(root,relative);if(fs.lstatSync(full).isSymbolicLink())throw Error('Core symlink rejected.');if(fs.statSync(full).isDirectory()){for(const name of fs.readdirSync(full).sort())walk(relative+name+(fs.statSync(path.join(full,name)).isDirectory()?'/':''));}else files.push(relative);}
- for(const dir of roots)walk(dir);return files.sort();}
+ for(const relative of [...roots,...assets])walk(relative);return files.sort();}
 export function verifyRelease(root){const m=readManifest(root);for(const f of m.files)verifyFile(root,f);if(JSON.stringify(listCore(root))!==JSON.stringify(m.files.map(f=>f.path).sort()))throw Error('Manifest does not exactly cover the canonical core.');return m;}
