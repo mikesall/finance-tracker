@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.2.1",
+  "version": "0.2.2",
   "files": [
     {
       "path": "finance-core/schemas/finance-allocation-mapping-schema.ts",
@@ -59,8 +59,8 @@
     },
     {
       "path": "finance-core/ui/ledger-shell.html",
-      "bytes": 96735,
-      "sha256": "462532a65f79b0875a78fdd9dd59ec7549296c1ee6fc26284e95a3d9a2664846"
+      "bytes": 97348,
+      "sha256": "32f6ff0d41d2351366be471cd86a444fbcf6af6ffa4a442cd4f9500fe9cc10cd"
     },
     {
       "path": "public/dashboard-requests.js",
@@ -79,13 +79,13 @@
     },
     {
       "path": "public/finance-core/read-only-dashboard.js",
-      "bytes": 74383,
-      "sha256": "61de1deb0a9fe77f72f7dab467dfd4ca0542994b21df80736f2625b063f7fb78"
+      "bytes": 75354,
+      "sha256": "e7c32f4772968b0328a4b09f2a473343fe887a03fab2df63612f44e059c9f7f5"
     },
     {
       "path": "public/finance-core/read-only-model.js",
-      "bytes": 33941,
-      "sha256": "d9fd08508b149cd2045d3067513120adb9ed8aa3dc9bdcc145f835c1343cd04c"
+      "bytes": 33935,
+      "sha256": "f020b0f028a344e43bf20986921e28e65c7ffeeded64833a68992617262705fd"
     },
     {
       "path": "public/pulse.svg",

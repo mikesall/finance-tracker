@@ -23,5 +23,5 @@ test('pie families and children descend by current allocation, with stable ties 
  assert.deepEqual(Array.from(ordered.allocation,c=>c.id),['global_stock','domestic_stock','property_fund','bonds','credit','cash','unclassified']);assert.equal(JSON.stringify(pf),before);
 });
 test('presentation titles use title case while retaining units and acronyms',()=>{
- for(const [before,after] of [['12 mo. spend','12 mo. Spend'],['3 mo. spend, annualized','3 mo. Spend, Annualized'],['Budget by category','Budget by Category'],['Actual vs. target','Actual vs. Target'],['Total net worth','Total Net Worth'],['USD amount','USD Amount']])assert.equal(M.titleLabel(before),after);
+ for(const [before,after] of [['12 mo. spend','12 Mo. Spend'],['3 mo. spend, annualized','3 Mo. Spend, Annualized'],['Budget by category','Budget by Category'],['Actual vs. target','Actual vs. Target'],['Total net worth','Total Net Worth'],['USD amount','USD Amount']])assert.equal(M.titleLabel(before),after);
 });
