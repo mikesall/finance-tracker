@@ -1,4 +1,6 @@
 import { z } from "zod";
+import {withSnapshotCorrection,validateCorrectionCollection} from "./finance-snapshot-corrections";
+import {nativeSnapshotSchema} from "./finance-native-schema";
 import {requireFinanceInventory} from "../finance-core/schemas/finance-inventory-schema.ts";
 import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db";
@@ -21,19 +23,27 @@ export async function readStatus() {
 export async function writeSnapshot(input: unknown) {
   const parsed = snapshotWriteSchema.safeParse(input);
   if (!parsed.success) throw new SnapshotError(parsed.error.issues.map(x=>`${x.path.join(".")}: ${x.message}`).slice(0,5).join("; "));
-  const {snapshot, expectedRevision} = parsed.data;
+  const {expectedRevision,correction} = parsed.data;
+  const amended=correction?withSnapshotCorrection(parsed.data.snapshot,expectedRevision,correction):parsed.data.snapshot;
+  const valid=nativeSnapshotSchema.safeParse(amended);
+  if(!valid.success)throw new SnapshotError("Invalid correction provenance or snapshot.");
+  const snapshot=valid.data;
   try{requireFinanceInventory(snapshot as any);}catch(e){throw new SnapshotError(e instanceof Error?e.message:"Source inventory reconciliation failed.");}
   const view=snapshotView(snapshot);
   const data = canonicalJson(snapshot);
   if (new TextEncoder().encode(data).length > 5_000_000) throw new SnapshotError("Snapshot exceeds 5 MB.",413);
   const digest = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(data))),x=>x.toString(16).padStart(2,"0")).join("");
   const current = await readSnapshot();
-  if (current.view?.snapshotId === view.snapshotId) {
-    if (current.digest !== digest) throw new SnapshotError("Snapshot ID already exists with different content.",409);
-    return {...await readStatus(),idempotent:true};
-  }
+  if (current.digest === digest) return {...await readStatus(),idempotent:true};
   if (current.revision !== expectedRevision) throw new SnapshotError("Revision conflict. Read the current snapshot before retrying.",409);
-  if (current.view && Date.parse(view.collectedAt) <= Date.parse(current.view.collectedAt)) throw new SnapshotError("Collection time must be newer than the current snapshot.",409);
+  if(correction){
+    if(!current.snapshot||current.digest!==correction.expectedDigest)throw new SnapshotError("Correction base digest conflict. Read the current snapshot before retrying.",409);
+    try{validateCorrectionCollection(current.snapshot,snapshot);}catch(e){throw new SnapshotError(e instanceof Error?e.message:"Correction changed source collection facts.");}
+  }else{
+    if(snapshot.metadata.correction)throw new SnapshotError("New collections must omit prior correction provenance; use the explicit correction option for an existing collection.");
+    if(current.view?.snapshotId===view.snapshotId)throw new SnapshotError("Snapshot ID already exists with different content. Use an explicit same-collection correction when justified.",409);
+    if(current.view&&Date.parse(view.collectedAt)<=Date.parse(current.view.collectedAt))throw new SnapshotError("Collection time must be newer than the current snapshot.",409);
+  }
   const record={id:"current",data:"gz:"+await encodeWorkspace(snapshot),digest,snapshotId:view.snapshotId,revision:expectedRevision+1,collectedAt:view.collectedAt,updatedAt:new Date().toISOString()};
   const db=getDb();
   await archiveCurrentSnapshot(current);

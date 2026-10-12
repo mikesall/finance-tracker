@@ -9,7 +9,7 @@ let seq=0;async function mcp(name,args={},anonymous=false){const r=await request
 assert.equal((await mcp('read_finance_snapshot',{},true)).status,401);
 assert.equal((await request('/api/workspace',{anonymous:true})).status,401);
 const login=await request('/signin-with-chatgpt');assert.equal(login.status,302);cookie=login.headers.get('set-cookie').split(';')[0];
-const contract=await mcp('get_finance_refresh_contract');assert.equal(contract.status,200);assert.equal(contract.data.templateVersion,'0.4.0');assert.equal(contract.data.contractVersion,4);
+const contract=await mcp('get_finance_refresh_contract');assert.equal(contract.status,200);assert.equal(contract.data.templateVersion,'0.4.1');assert.equal(contract.data.contractVersion,5);
 const before=await mcp('read_finance_snapshot');assert.equal(before.data.revision,0,'Refusing to touch a populated preview.');assert.equal(before.data.snapshot,null);
 assert.match((await request('/')).data,/No financial data has been imported/);
 const initial=await mcp('initialize_finance_workspace');assert.equal(initial.status,200);assert.equal(initial.data.workspace.transactions.length,0);assert.deepEqual((await mcp('initialize_finance_workspace')).data,initial.data);

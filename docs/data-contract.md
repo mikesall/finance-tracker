@@ -1,11 +1,11 @@
-# Generic data contract (core 0.4.0)
+# Generic data contract (core 0.4.1)
 
 Native snapshots use schema `1.1`. Ask the running private Site for its contract: existing deployments may deliberately retain an older wire format through a private adapter. Never relabel or migrate stored data merely to install a core update.
 
 - `spending.confirmedPlanningAssumptions` is optional. Its optional `recurringCosts` contains records with an ID, label, amount in cents, USD currency, cadence (weekly/monthly/quarterly/annual), evidence basis and estimate/confirmed status. Optional category/subcategory fields are identifiers chosen for that owner. Policy and workspace can independently hold these same records; an explicit workspace record supersedes a policy record with the same ID in the read model. Source observations never automatically approve a budget. Rules remain generic exact-ID, receipt, merchant, amount, date and split rules.
 - `debt_payment` is a generic payment kind; full principal-plus-interest is not automatically economic spending. `excluded_discontinued` records historical costs that should not enter the ongoing baseline. Signed refunds still reduce actuals. Optional `discontinuedPayments` is a diagnostic amount, not a separate spend total.
 - Declare source/workspace `classificationState: unclassified`, or configure `unclassifiedCategoryIds` in policy/workspace (policy takes precedence), to allow `unidentified_only` rules. No fixed shopping/other category identity establishes uncertainty. Explicit classified state wins over the configured list. Direct item corrections and exact receipt splits retain their existing priority.
-- `portfolio.manualBalances` is optional. Each record has a stable ID, label, signed nullable value, currency, asset/liability kind, evidence basis, and status (`confirmed`, `estimate`, `unverified`). Assets are nonnegative and liabilities nonpositive. No named property or liability type is mandatory.
+- `portfolio.manualBalances` is optional. Each record has a stable ID, label, signed nullable value, currency, asset/liability kind, evidence basis, and status (`confirmed`, `documented`, `estimate`, `unverified`). Assets are nonnegative and liabilities nonpositive. No named property or liability type is mandatory.
 - `portfolioReporting.netWorth` is optional. Its `manualBalanceIds` explicitly selects records; absence selects none. Net worth independently includes signed linked account balances. A selected estimate is permitted only as explicit owner policy; status remains in the reference evidence. Missing, unknown-valued or unverified selected evidence makes the total unknown rather than inventing a value. Unselected references never enter totals. A record referencing a linked account through `linkedAccountId` is already in linked scope and is not added again. Writers must identify duplicate evidence; never create two IDs for the same asset or debt.
 - Investment account balances and their holdings are counted once through the existing reconciliation model. Allocation uses linked investment plus depository balances, excluding manual balances and liabilities. Liquid net worth remains a disclosed estimate based on eligible linked accounts, minus liabilities; manual assets are excluded from liquidity estimates. It does not claim verified withdrawal value.
 
@@ -44,3 +44,23 @@ An empty `profile.familyClasses` derives display families from `portfolioReporti
 Every active proposal needs `comparisonScope: {excludeUnresolvedTaxes: boolean, excludedSourceKeys: string[], basis: string}`. Use exact native transaction IDs for identified one-time costs or other evidence-based proposal exclusions; use an empty array if none. Set `excludeUnresolvedTaxes` to match the estimation basis, not to reclassify the payments. Merchant identity, size and generic tax-category confidence alone do not establish income-tax type. Preserve explicit property tax in Home and sales tax in its purchase.
 
 The budget table and subcategory variance use the declared scope and disclose omitted signed totals/counts. Full spending remains unchanged in the headline, chart and Transactions. Chart budget overlays are hidden when the scopes differ. Approved budgets do not inherit a stale proposal scope; approval and any confirmed spending exclusions are separate owner decisions. `verify_finance_setup` checks scope/reconciliation, family coverage, independent metric availability and amount evidence/freshness in addition to inventory. Warnings about truthful unknowns do not imply setup failure.
+
+## Same-collection corrections (template contract 5)
+
+`metadata.retrievedAt` is the actual collection instant, never a convenient snapshot assembly/version timestamp. A justified interpretation or transcription correction uses the existing `write_finance_snapshot` tool with an explicit `correction` option:
+
+```js
+{
+  expectedRevision: current.revision,
+  snapshot: correctedSnapshot,
+  correction: {
+    expectedDigest: current.digest,
+    correctedAt: actualCorrectionInstant,
+    reason: "Evidence supporting the correction; original source dates retained."
+  }
+}
+```
+
+Read current state first. Preserve the collection/provider dates, freshness and record scope exactly. Change only the justified evidence fields and matching inventory fields. The writer validates inventory, requires revision and digest preconditions, archives the previous payload by digest, and adds `metadata.correction` containing this option plus `baseRevision`. This audit is part of the resulting canonical snapshot digest. The timestamp-derived snapshot ID still names the collection; the revision and digest identify a particular corrected version. Reuse the exact request, including `correctedAt`, for an uncertain retry; identical resulting content is idempotent. A stale base or concurrent change fails. Read back and compare against the submitted snapshot plus server-added provenance, then verify effective results and unchanged policy/workspace.
+
+This narrow correction path does not add/remove records, change source dates or claim a new query. A genuinely new query uses the ordinary refresh path with its real collection timestamp and omits prior `metadata.correction`. Previous corrections remain in archived history. Restore through the existing snapshot restore route using an archived digest and current revision; restoration also preserves original source dates. Never patch a private writer or freshen timestamps to avoid a conflict.

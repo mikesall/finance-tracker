@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.4.0",
+  "version": "0.4.1",
   "files": [
     {
       "path": "finance-core/schemas/finance-allocation-mapping-schema.ts",
@@ -24,8 +24,8 @@
     },
     {
       "path": "finance-core/schemas/finance-native-schema.ts",
-      "bytes": 13201,
-      "sha256": "72177997b6684d4657fe35ed0772f400891d97417ebb20bcf44f00ecedd9a6b8"
+      "bytes": 13923,
+      "sha256": "850f7cf8ad236cadb13b6b856bf0a6c4e0841fa76b45a18753e7f173585f048f"
     },
     {
       "path": "finance-core/schemas/finance-policy-precedence.ts",
