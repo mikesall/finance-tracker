@@ -16,11 +16,13 @@ globalThis.PortfolioModel=(()=>{
   const name=(c.id+' '+(c.label||'')).toLowerCase().replace(/[_-]/g,' ');
   if(c.id===unknownId||/\bunclassified\b|\bunknown\b/.test(name))return unknownId;
   if(/\bmixed\b|\bbalanced\b|\bmulti asset\b/.test(name))return 'mixed_multi_asset';
-  if(/\breal assets?\b|\breal estate\b|\bhome\b|\bresidence\b|\bproperty\b|\breits?\b|\bgold\b|\bcommodit(?:y|ies)\b|\binfrastructure\b/.test(name))return 'real_assets';
-  if(/\bcash\b|\bmoney market\b/.test(name))return 'cash';
-  if(/\bbonds?\b|\bfixed income\b|\bcredit\b|\bdebt\b|\btreasur(?:y|ies)\b|\btips\b/.test(name))return 'debt';
-  if(/\bequit(?:y|ies)\b|\bstocks?\b/.test(name))return 'equity';
-  return null;
+  const matches=[
+   [/\breal assets?\b|\breal estate\b|\bhome\b|\bresidence\b|\bproperty\b|\breits?\b|\bgold\b|\bcommodit(?:y|ies)\b|\binfrastructure\b/,'real_assets'],
+   [/\bcash\b|\bmoney market\b/,'cash'],
+   [/\bbonds?\b|\bfixed income\b|\bcredit\b|\bdebt\b|\btreasur(?:y|ies)\b|\btips\b/,'debt'],
+   [/\bequit(?:y|ies)\b|\bstocks?\b/,'equity']
+  ].filter(([pattern])=>pattern.test(name));
+  return matches.length===1?matches[0][1]:null;
  }
  const familyId=(value,report)=>{const id=typeof value==='string'?value:value.id,c=report?.taxonomy?.find(c=>c.id===id)||(typeof value==='string'?{id}:value);return configuredFamilies?(Object.keys(familyClasses).find(f=>familyClasses[f].includes(id))||unknownId):(c.familyId||broadFamily(c)||'needs_family:'+id);};
  function definitions(allocation,report){
@@ -117,9 +119,10 @@ globalThis.PortfolioModel=(()=>{
   if(compositionScope==='all_assets'){
    // The source inventory/policy selects manual evidence once; only eligible
    // positive assets enter composition. Debts never become negative pie slices.
-   const extraAccounts=accounts.filter(a=>!['investment','depository','credit','loan'].includes(a.type));
+   const assetAccounts=accounts.filter(a=>!['credit','loan'].includes(a.type)||a.netBalance>0);
+   const extraAccounts=assetAccounts.filter(a=>!['investment','depository'].includes(a.type));
    const selectedAssets=manualScope.filter(s=>!s.duplicate&&s.record?.kind!=='liability');
-   const knownAssets=accounts.filter(a=>!['credit','loan'].includes(a.type)).every(a=>a.currency==='USD'&&Number.isFinite(a.netBalance))&&selectedAssets.every(s=>s.eligible&&s.record.currency==='USD'&&Number.isFinite(s.record.value));
+   const knownAssets=assetAccounts.every(a=>a.currency==='USD'&&Number.isFinite(a.netBalance))&&selectedAssets.every(s=>s.eligible&&s.record.currency==='USD'&&Number.isFinite(s.record.value));
    const depositValues=accounts.filter(a=>a.type==='depository'),positiveCash=depositValues.reduce((n,a)=>n+Math.max(0,cents(a.netBalance)||0),0);
    const values=new Map(allocation.map(c=>[c.id,{...c,valueCents:classValues.get(c.id).valueCents}]));
    const cashId=values.has(report?.cashAssetClassId)?report.cashAssetClassId:unknownId;
@@ -128,11 +131,11 @@ globalThis.PortfolioModel=(()=>{
     if(!(valueCents>0))return;
     const mapping=(report?.balanceClassifications||[]).find(m=>m.source===source&&m.balanceId===record.id),mapped=values.get(mapping?.assetClassId);
     if(mapped)mapped.valueCents+=valueCents;
-    else {const id=source+'_asset:'+record.id;values.set(id,{id,label:record.label||record.institution||'Other asset',targetPercent:null,valueCents});}
+    else {const id=source+'_asset:'+record.id,receivable=source==='linked'&&['credit','loan'].includes(record.type);values.set(id,{id,label:receivable?'Credit balance receivable · '+(record.label||record.institution||record.type):record.label||record.institution||'Other asset',...(receivable?{familyId:'debt'}:{}),targetPercent:null,valueCents});}
    }
    for(const a of extraAccounts)addBalance(a,'linked',a.currency==='USD'?cents(a.netBalance):null);
    for(const selected of selectedAssets)if(selected.eligible)addBalance(selected.record,'manual',selected.record.currency==='USD'?cents(selected.record.value):null);
-   const linkedPositive=accounts.filter(a=>!['credit','loan'].includes(a.type)).reduce((n,a)=>n+Math.max(0,cents(a.netBalance)||0),0),manualPositive=selectedAssets.reduce((n,s)=>n+(s.eligible?Math.max(0,cents(s.record.value)||0):0),0);
+   const linkedPositive=assetAccounts.reduce((n,a)=>n+Math.max(0,cents(a.netBalance)||0),0),manualPositive=selectedAssets.reduce((n,s)=>n+(s.eligible?Math.max(0,cents(s.record.value)||0):0),0);
    denominator=knownAssets?linkedPositive+manualPositive:null;
    // Aggregate balances and account scope must agree; a holdings total is not
    // a substitute for an unavailable account balance.
@@ -163,17 +166,18 @@ globalThis.PortfolioModel=(()=>{
  }
  function familyCoverage(pf){
   const expected=pf.allocation||[],families=pf.families||[],report=pf.report;
-  const missing=expected.filter(c=>c.id!==unknownId&&(!families.some(f=>f.memberIds.includes(c.id))||familyId(c,report)===unknownId)).map(c=>c.id);
+  const missing=expected.filter(c=>!families.some(f=>f.memberIds.includes(c.id))).map(c=>c.id);
   const invalid=expected.filter(c=>families.reduce((n,f)=>n+f.memberIds.filter(id=>id===c.id).length,0)!==1||(configuredFamilies&&c.id!==unknownId&&Object.values(familyClasses).reduce((n,ids)=>n+ids.filter(id=>id===c.id).length,0)!==1)).map(c=>c.id);
   const extra=families.flatMap(f=>f.memberIds).filter(id=>!expected.some(c=>c.id===id));
+  const wrongParent=expected.filter(c=>families.some(f=>f.memberIds.includes(c.id)&&f.id!==familyId(c,report))).map(c=>c.id);
   const unresolved=expected.filter(c=>familyId(c,report).startsWith('needs_family:')).map(c=>c.id);
-  // Only reject split siblings where their existing class labels establish a
-  // shared broad exposure. Cash-only and genuine singleton families are valid.
-  const splitBroadGroups=broadFamilies.filter(b=>{const siblings=expected.filter(c=>broadFamily(c)===b.id);return siblings.length>1&&new Set(siblings.flatMap(c=>families.filter(f=>f.memberIds.includes(c.id)).map(f=>f.id))).size>1;}).map(b=>b.id);
+  // Default inference must coalesce recognized siblings; explicit policy or
+  // owner mappings may intentionally split them. Always verify resolved parents.
+  const splitBroadGroups=broadFamilies.filter(b=>{const siblings=configuredFamilies?[]:expected.filter(c=>!c.familyId&&broadFamily(c)===b.id);return siblings.length>1&&new Set(siblings.flatMap(c=>families.filter(f=>f.memberIds.includes(c.id)).map(f=>f.id))).size>1;}).map(b=>b.id);
   const same=(a,b)=>a===b||(Number.isFinite(a)&&Number.isFinite(b)&&Math.abs(a-b)<.000001);
   const aggregateIssues=families.filter(f=>{const members=expected.filter(c=>f.memberIds.includes(c.id)),values=members.every(c=>Number.isFinite(c.valueCents))?members.reduce((n,c)=>n+c.valueCents,0):null,percent=values!==null&&pf.denominator>0?values/pf.denominator*100:null,targets=globalThis.FinanceProfile?.familyTargetPolicy?.unassignedFamilyIds?.includes(f.id)||members.some(c=>!Number.isFinite(c.targetPercent))?null:members.reduce((n,c)=>n+c.targetPercent,0);return !same(f.valueCents,values)||!same(f.actualPercent,percent)||!same(f.targetPercent,targets);}).map(f=>f.id);
   const denominatorReconciles=!pf.allocationAvailable||(expected.every(c=>same(c.actualPercent,c.valueCents/pf.denominator*100))&&families.reduce((n,f)=>n+f.valueCents,0)===pf.denominator);
-  return {ok:!missing.length&&!invalid.length&&!extra.length&&!unresolved.length&&!splitBroadGroups.length&&!aggregateIssues.length&&denominatorReconciles,derivedFromTaxonomy:!configuredFamilies,missingClassIds:missing,invalidMembershipClassIds:invalid,unexpectedClassIds:extra,unresolvedFamilyClassIds:unresolved,splitBroadGroups,aggregateIssueFamilyIds:aggregateIssues,denominatorReconciles,classifiedValueCents:pf.allocationAvailable?expected.filter(c=>c.id!==unknownId).reduce((n,c)=>n+c.valueCents,0):null};
+  return {ok:!missing.length&&!invalid.length&&!extra.length&&!wrongParent.length&&!unresolved.length&&!splitBroadGroups.length&&!aggregateIssues.length&&denominatorReconciles,derivedFromTaxonomy:!configuredFamilies,missingClassIds:missing,invalidMembershipClassIds:invalid,unexpectedClassIds:extra,mismatchedParentClassIds:wrongParent,unresolvedFamilyClassIds:unresolved,splitBroadGroups,aggregateIssueFamilyIds:aggregateIssues,denominatorReconciles,classifiedValueCents:pf.allocationAvailable?expected.filter(c=>familyId(c,report)!==unknownId).reduce((n,c)=>n+c.valueCents,0):null};
  }
  return {build,display,groupHoldings,allocationFamilies,familyId,familyCoverage};
 })();

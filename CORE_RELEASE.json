@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "0.5.0",
+  "version": "0.5.1",
   "files": [
     {
       "path": "finance-core/schemas/finance-allocation-mapping-schema.ts",
@@ -84,8 +84,8 @@
     },
     {
       "path": "public/finance-core/portfolio-model.js",
-      "bytes": 26894,
-      "sha256": "051309a5990256cb74585c8a307f539e95c765f330a1eea25a2cc0f496bb04f9"
+      "bytes": 27298,
+      "sha256": "fa029751c6684781245b84701197d6be14f8cbf951e4b48135491062304e16f3"
     },
     {
       "path": "public/finance-core/read-only-dashboard.js",
